@@ -1005,6 +1005,7 @@ const receiptDate = document.getElementById("receipt-date");
 const receiptCategory = document.getElementById("receipt-category");
 const receiptNote = document.getElementById("receipt-note");
 const receiptStatus = document.getElementById("receipt-status");
+const receiptAnalyze = document.getElementById("receipt-analyze");
 let activeTab = "middagsplan";
 let activeDayPlan = dayOrder[0].key;
 let activeMealDay = dayOrder[0].key;
@@ -1853,6 +1854,35 @@ receiptForm?.addEventListener("submit", async (event) => {
 
   receiptForm.reset();
   receiptPreview.innerHTML = "";
+});
+
+receiptAnalyze?.addEventListener("click", async () => {
+  const file = receiptFile.files?.[0];
+  if (!file) {
+    receiptStatus.textContent = "Velg et bilde først.";
+    return;
+  }
+  receiptStatus.textContent = "Analyserer (stub)...";
+  const dataUrl = await fileToDataUrl(file);
+  try {
+    const resp = await fetch("/api/analyze-receipt", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        imageData: dataUrl,
+        note: receiptNote.value || file.name,
+        amount: receiptAmount.value || undefined
+      })
+    });
+    const json = await resp.json();
+    if (json.total) receiptAmount.value = json.total;
+    if (json.date) receiptDate.value = json.date;
+    if (json.category) receiptCategory.value = json.category;
+    receiptStatus.textContent = "Analyse fullført (stub). Rediger og lagre.";
+  } catch (err) {
+    console.error(err);
+    receiptStatus.textContent = "Kunne ikke analysere. Fyll inn manuelt.";
+  }
 });
 
 dayGrid.addEventListener("input", (event) => {

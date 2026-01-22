@@ -19,6 +19,15 @@ const defaultStore = () => ({
   receipts: []
 });
 
+const categoryKeywords = {
+  "Kjøtt/Fisk": ["kylling", "kjøtt", "fisk", "laks", "bacon"],
+  "Grønnsaker/Frukt": ["banan", "eple", "gulrot", "agurk", "salat", "potet"],
+  "Meieri/Egg": ["melk", "ost", "yoghurt", "egg", "smør"],
+  Drikke: ["brus", "cola", "juice", "øl", "vin", "kaffe"],
+  Snacks: ["chips", "sjokolade", "godteri", "potetgull", "kjeks"],
+  Tørrvarer: ["mel", "pasta", "ris", "nudler", "brød"]
+};
+
 function currentMonthKey() {
   const now = new Date();
   return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
@@ -109,6 +118,27 @@ const server = http.createServer(async (req, res) => {
     return send(res, 200, store);
   }
 
+  if (req.method === "POST" && url.pathname === "/api/analyze-receipt") {
+    try {
+      const body = await parseBody(req);
+      const text = (body.text || "").toLowerCase();
+      const amount = Number(body.amount || 0);
+      const date = body.date || new Date().toISOString().slice(0, 10);
+      const guessedCategory = guessCategory(text);
+      const resp = {
+        total: amount || 0,
+        date,
+        items: [],
+        category: guessedCategory || "Annet",
+        note: body.note || ""
+      };
+      return send(res, 200, resp);
+    } catch (err) {
+      console.error(err);
+      return send(res, 400, { ok: false, error: "Invalid JSON" });
+    }
+  }
+
   if (req.method === "POST" && url.pathname === "/api/state") {
     try {
       const body = await parseBody(req);
@@ -164,6 +194,17 @@ const server = http.createServer(async (req, res) => {
 
   send(res, 404, { ok: false, error: "Not found" });
 });
+
+function guessCategory(text) {
+  if (!text) return null;
+  const lower = text.toLowerCase();
+  for (const [cat, keywords] of Object.entries(categoryKeywords)) {
+    if (keywords.some((k) => lower.includes(k))) {
+      return cat;
+    }
+  }
+  return null;
+}
 
 server.listen(PORT, () => {
   console.log(`Budget/receipt service running on http://localhost:${PORT}`);
