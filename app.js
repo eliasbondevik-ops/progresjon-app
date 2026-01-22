@@ -342,6 +342,7 @@ let activeDayPlan = dayOrder[0].key;
 let planState = migratePlanState(loadState(storageKeys.plan, {}));
 let shoppingList = loadState(storageKeys.list, []);
 let remindersState = loadState(storageKeys.reminders, {});
+const mealFilters = {};
 
 function loadState(key, fallback) {
   try {
@@ -407,6 +408,7 @@ function buildPlanner() {
 
     const dayState = planState[day.key] || { meal: "", servings: defaultServings };
     const selected = dayState.meal || "";
+    const filterValue = mealFilters[day.key] || "";
 
     card.innerHTML = `
       <div class="day-card__header">
@@ -416,14 +418,9 @@ function buildPlanner() {
       <div class="input-grid">
         <div class="input-row">
           <label class="input-label" for="select-${day.key}">Velg middag</label>
+          <input class="input" type="text" placeholder="Søk etter rett" value="${filterValue}" data-day-filter="${day.key}" aria-label="Søk etter rett for ${day.label}">
           <select class="select" id="select-${day.key}" data-day="${day.key}">
-            <option value="">- Ingen valgt -</option>
-            ${meals
-              .map(
-                (meal) =>
-                  `<option value="${meal.id}" ${meal.id === selected ? "selected" : ""}>${meal.name}</option>`
-              )
-              .join("")}
+            ${renderMealOptions(filterValue, selected)}
           </select>
         </div>
         <div class="input-row">
@@ -506,6 +503,25 @@ function renderShoppingList() {
     `
     )
     .join("");
+}
+
+function renderMealOptions(filterValue, selected) {
+  const query = (filterValue || "").trim().toLowerCase();
+  let filtered = meals.filter((meal) => meal.name.toLowerCase().includes(query));
+  if (selected && !filtered.find((m) => m.id === selected)) {
+    const selectedMeal = meals.find((m) => m.id === selected);
+    if (selectedMeal) filtered = [selectedMeal, ...filtered];
+  }
+  if (!filtered.length) {
+    return `<option value="">Ingen treff</option>`;
+  }
+  const options = filtered
+    .map(
+      (meal) =>
+        `<option value="${meal.id}" ${meal.id === selected ? "selected" : ""}>${meal.name}</option>`
+    )
+    .join("");
+  return `<option value="">- Ingen valgt -</option>${options}`;
 }
 
 function renderDayPlan() {
@@ -751,6 +767,19 @@ dayGrid.addEventListener("click", (event) => {
   if (target.dataset.action === "add-all") {
     const dayKey = target.getAttribute("data-day");
     addAllIngredients(dayKey);
+  }
+});
+
+dayGrid.addEventListener("input", (event) => {
+  const target = event.target;
+  if (!target.matches("input[data-day-filter]")) return;
+  const dayKey = target.getAttribute("data-day-filter");
+  const value = target.value || "";
+  mealFilters[dayKey] = value;
+  const select = document.querySelector(`select[data-day="${dayKey}"]`);
+  const dayState = planState[dayKey] || { meal: "", servings: defaultServings };
+  if (select) {
+    select.innerHTML = renderMealOptions(value, dayState.meal);
   }
 });
 
