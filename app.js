@@ -499,6 +499,199 @@ const meals = [
   }
 ];
 
+const mealSteps = {
+  taco: [
+    "Stek kjøttdeig med tacomiks etter pakkeanvisning.",
+    "Kutt grønnsaker og varm lefsene.",
+    "Fyll lefser med kjøtt, grønnsaker, ost og salsa/rømme."
+  ],
+  spaghetti: [
+    "Stek kjøttdeig med hakket løk og hvitløk.",
+    "Tilsett gulrot i terninger og hakket tomat, la småkoke 10-15 min.",
+    "Kok spaghetti, bland med sausen og topp med parmesan."
+  ],
+  "kylling-ovnsbakt": [
+    "Forvarm ovnen til 200°C.",
+    "Kutt poteter og grønnsaker, vend i olje/krydder på bakebrett.",
+    "Legg kylling oppå og stek 25-35 min til alt er gjennomstekt."
+  ],
+  fiskekaker: [
+    "Kok poteter til møre.",
+    "Rasp gulrot til råkost, smak til med sitron.",
+    "Stek fiskekaker i smør til gylne og server med poteter og råkost."
+  ],
+  curry: [
+    "Stek kyllingbiter lett i olje.",
+    "Rør inn curry paste, tilsett kokosmelk og la småkoke 10 min.",
+    "Ha i brokkoli og sukkererter mot slutten, server med kokt ris."
+  ],
+  "pasta-pesto": [
+    "Kok pasta al dente.",
+    "Rist pinjekjerner lett i panne.",
+    "Vend pasta med pesto, topp med tomat, ruccola og pinjekjerner."
+  ],
+  suppe: [
+    "Kutt grønnsaker i terninger.",
+    "Kok opp buljong, tilsett grønnsaker og la småkoke til møre (15-20 min).",
+    "Smak til med salt/pepper og server med flatbrød."
+  ],
+  lasagne: [
+    "Stek kjøttdeig med løk og hvitløk, tilsett tomat og la småkoke.",
+    "Legg lagvis saus, lasagneplater og ost i form.",
+    "Stek på 200°C i ca. 30-35 min til gyllen."
+  ],
+  "ovnsbakt-laks": [
+    "Forvarm ovn til 200°C.",
+    "Legg laks i form med sitronskiver, salt/pepper.",
+    "Bak 15-20 min; stek poteter/asparges ved siden av."
+  ],
+  "kylling-fajitas": [
+    "Stek strimlet kylling med fajitakrydder.",
+    "Stek paprika og løk lett i samme panne.",
+    "Varm tortillalefser og fyll med kylling og grønnsaker."
+  ],
+  "pizza-margherita": [
+    "Forvarm ovn til maks varme med stekebrett inni.",
+    "Smør deig med pizzasaus, legg på mozzarella.",
+    "Stek 8-12 min til gyllen; topp med basilikum og olje."
+  ],
+  "biff-stroganoff": [
+    "Brun biffstrimler raskt i varm panne, sett til side.",
+    "Stek løk og sopp, tilsett buljong og fløte.",
+    "Legg biffen tilbake og la småkoke 5-10 min; server med ris/potetmos."
+  ],
+  "chili-con-carne": [
+    "Stek kjøttdeig med krydder.",
+    "Tilsett tomat, bønner og mais; la småkoke 15-20 min.",
+    "Server med ris."
+  ],
+  "falafel-pita": [
+    "Varm falafel etter anvisning.",
+    "Varm pitabrød og fyll med salat, tomat og dressing.",
+    "Legg falafel i pitabrød og server."
+  ],
+  "risotto-sopp": [
+    "Stek løk og sopp i smør.",
+    "Rør inn ris og spe med varm buljong litt etter litt til myk (ca. 18-20 min).",
+    "Rør inn smør/parmesan mot slutten."
+  ],
+  "wok-nudler": [
+    "Stek kylling/tofu, sett til side.",
+    "Wok grønnsaker raskt, tilsett nudler og saus.",
+    "Bland inn kylling/tofu og server."
+  ],
+  omelett: [
+    "Pisk egg med litt salt/pepper.",
+    "Stek grønnsaker lett i panne, hell over egg.",
+    "Stek på lav varme til eggene setter seg; brett og server."
+  ],
+  pannekaker: [
+    "Pisk sammen egg, melk og mel til glatt røre.",
+    "La hvile 10 min, stek tynne pannekaker i smør.",
+    "Server med syltetøy."
+  ],
+  "laks-pasta": [
+    "Kok pasta al dente.",
+    "Stek laksebiter raskt, sett til side.",
+    "Kok opp fløte/creme fraiche med sitron og spinat, vend inn pasta og laks."
+  ],
+  caesarsalat: [
+    "Stek kylling og skjær i skiver.",
+    "Kutt salat, bland med dressing og krutonger.",
+    "Topp med kylling og parmesan."
+  ],
+  "torsk-curry": [
+    "Kok ris.",
+    "La curry paste og kokosmelk småkoke, tilsett grønnsaker.",
+    "Legg i torsk og trekk til fisken er mør (6-8 min)."
+  ],
+  "pulled-pork-tacos": [
+    "Varm pulled pork med BBQ-saus.",
+    "Varm tortillalefser.",
+    "Fyll med kjøtt, mais og rødkål."
+  ],
+  shakshuka: [
+    "Stek løk og paprika, tilsett tomat og krydder.",
+    "La småkoke 10 min, lag fordypninger og knekk i egg.",
+    "Sett på lokk og la eggene stivne."
+  ],
+  fiskesuppe: [
+    "Kutt grønnsaker i terninger, kok i buljong til møre.",
+    "Tilsett fløte og fisk, trekk forsiktig i 6-8 min.",
+    "Smak til med salt/pepper og dill hvis ønsket."
+  ],
+  gryterett: [
+    "Brun kjøttdeig.",
+    "Tilsett potet/gulrot i terninger og løk, hell over buljong.",
+    "La småkoke til poteter er møre (20-25 min)."
+  ],
+  "vegetar-taco": [
+    "Skyll bønner og mais, varm med tacokrydder om ønsket.",
+    "Varm tortillalefser.",
+    "Fyll med bønner, mais, paprika og avokado."
+  ],
+  burger: [
+    "Form burgere av kjøttdeig, krydre og stek til gjennomstekt.",
+    "Varm burgerbrød.",
+    "Monter med ost, salat/tomat og dressing."
+  ],
+  "pad-thai": [
+    "Bløtlegg eller kok risnudler etter pakke.",
+    "Stek kylling, skyv til side og stek egg raskt.",
+    "Tilsett saus, nudler, spirer og vårløk; topp med peanøtter og lime."
+  ],
+  ramen: [
+    "Kok kraft med soyasaus.",
+    "Stek svinestrimler lett.",
+    "Kok nudler i kraften, legg på svin, pak choi og kokt egg, topp med vårløk."
+  ],
+  "fajita-bowl": [
+    "Stek kylling med fajitakrydder.",
+    "Kok ris.",
+    "Anrett i bolle med ris, kylling, paprika, mais, bønner og avokado/lime."
+  ],
+  "fiskeboller-i-karrisaus": [
+    "Lag hvit saus av smør/mel/melk, smak til med karri.",
+    "Ha i fiskeboller og varm gjennom.",
+    "Server med kokte poteter og gulrøtter."
+  ],
+  "potetmos-med-kjottkaker": [
+    "Kok poteter og lag mos med melk/smør.",
+    "Varm kjøttkaker og erter.",
+    "Server med brun saus over."
+  ],
+  "grillet-cheese": [
+    "Smør brødskiver med smør, legg ost mellom to skiver.",
+    "Stek i panne til gyllen og osten smelter.",
+    "Varm tomatsuppe av løk, tomat og fløte; server sammen."
+  ],
+  "kremet-brokkolipasta": [
+    "Kok pasta, spar litt pastavann.",
+    "Kok brokkolibuketter kort, stek hvitløk i olje.",
+    "Vend pasta med brokkoli, fløte og sitron; juster med pastavann og parmesan."
+  ],
+  "torsk-med-bacon": [
+    "Kok poteter og lag mos med melk/smør.",
+    "Stek bacon sprøtt.",
+    "Legg torsk i form, krydre og bak 10-12 min på 200°C; topp med bacon og server med gulrot."
+  ],
+  "indisk-daal": [
+    "Stek løk, hvitløk og ingefær med krydder.",
+    "Tilsett linser, tomat og kokosmelk; la småkoke til møre (15-20 min).",
+    "Smak til, server med ris."
+  ],
+  enchiladas: [
+    "Stek kylling i strimler, bland med tomat og mais.",
+    "Rull i tortillalefser, legg i form.",
+    "Hell over saus, topp med ost og bak 15-20 min på 200°C."
+  ],
+  "cobb-salat": [
+    "Stek kylling og bacon, skjær i biter.",
+    "Kok egg og del i båter.",
+    "Anrett salat med kylling, bacon, egg, avokado, tomat og ost; tilsett dressing."
+  ]
+};
+
 const storageKeys = {
   plan: "progresjon.weeklyPlanner.plan",
   list: "progresjon.weeklyPlanner.shoppingList",
@@ -792,9 +985,11 @@ function renderDayPlan() {
   const dayState = planState[activeDayPlan] || { meal: "", servings: defaultServings };
   const meal = meals.find((m) => m.id === dayState.meal);
   if (meal) {
+    const steps = mealSteps[meal.id] || [];
     dayMealEl.innerHTML = `
       <div class="day-plan__meal-title">${meal.name}</div>
       <div class="day-plan__meal-note">${dayState.servings} ${dayState.servings === 1 ? "person" : "personer"} · ${meal.note || "Ingen note"} ${dayState.restSource ? "· planlagt for å bruke rester" : ""}</div>
+      ${steps.length ? renderSteps(steps) : ""}
     `;
   } else {
     dayMealEl.innerHTML = `<div class="meal-note">Ingen middag valgt for ${labelForDay(activeDayPlan)} enda.</div>`;
@@ -936,6 +1131,17 @@ function renderCategoryOptions(selected) {
     .map((cat) => `<option value="${cat}" ${cat === selected ? "selected" : ""}>${cat}</option>`)
     .join("");
   return base + opts;
+}
+
+function renderSteps(steps) {
+  return `
+    <div class="steps">
+      <div class="steps__title">Fremgangsmåte</div>
+      <ol class="steps__list">
+        ${steps.map((step) => `<li>${step}</li>`).join("")}
+      </ol>
+    </div>
+  `;
 }
 
 function getRestSuggestions(meal, dayKey) {

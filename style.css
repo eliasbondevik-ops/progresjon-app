@@ -510,6 +510,28 @@ body {
   margin-top: 6px;
 }
 
+.steps {
+  margin-top: 8px;
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-md);
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.steps__title {
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.steps__list {
+  margin: 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: var(--muted);
+}
+
 .reminder-form {
   margin-top: 8px;
   display: flex;
