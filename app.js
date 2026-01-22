@@ -13,6 +13,7 @@ const meals = [
     id: "taco",
     name: "Taco med grønnsaker",
     note: "Klassiker som funker fint fredag eller lørdag.",
+    category: "TexMex",
     ingredients: [
       { item: "Kjøttdeig", amount: "400 g" },
       { item: "Tacomiks", amount: "1 pose" },
@@ -26,6 +27,7 @@ const meals = [
     id: "spaghetti",
     name: "Spaghetti bolognese",
     note: "Kan lages i større porsjon og fryses.",
+    category: "Pasta",
     ingredients: [
       { item: "Kjøttdeig/karbonadedeig", amount: "400 g" },
       { item: "Spaghetti", amount: "400 g" },
@@ -39,6 +41,7 @@ const meals = [
     id: "kylling-ovnsbakt",
     name: "Ovnsbakt kylling og poteter",
     note: "Legg alt på ett brett for enkel hverdagsmiddag.",
+    category: "Kylling",
     ingredients: [
       { item: "Kyllinglår/filét", amount: "600 g" },
       { item: "Poteter", amount: "700 g" },
@@ -50,6 +53,7 @@ const meals = [
   {
     id: "fiskekaker",
     name: "Fiskekaker og råkost",
+    category: "Fisk",
     ingredients: [
       { item: "Fiskekaker", amount: "6-8 stk" },
       { item: "Poteter", amount: "600 g" },
@@ -61,6 +65,7 @@ const meals = [
   {
     id: "curry",
     name: "Kremet kyllingcurry",
+    category: "Kylling",
     ingredients: [
       { item: "Kyllingbryst", amount: "500 g" },
       { item: "Rød curry paste", amount: "2 ss" },
@@ -73,6 +78,7 @@ const meals = [
   {
     id: "pasta-pesto",
     name: "Pasta med grønn pesto",
+    category: "Pasta",
     ingredients: [
       { item: "Pasta", amount: "400 g" },
       { item: "Grønn pesto", amount: "1 glass" },
@@ -84,6 +90,7 @@ const meals = [
   {
     id: "suppe",
     name: "Grønnsakssuppe",
+    category: "Suppe",
     ingredients: [
       { item: "Gulrøtter", amount: "3 stk" },
       { item: "Poteter", amount: "3 stk" },
@@ -95,6 +102,7 @@ const meals = [
   {
     id: "lasagne",
     name: "Klassisk lasagne",
+    category: "Pasta",
     ingredients: [
       { item: "Kjøttdeig", amount: "500 g" },
       { item: "Lasagneplater", amount: "1 pakke" },
@@ -107,6 +115,7 @@ const meals = [
   {
     id: "ovnsbakt-laks",
     name: "Ovnsbakt laks med sitron",
+    category: "Fisk",
     ingredients: [
       { item: "Laksefilet", amount: "600 g" },
       { item: "Sitron", amount: "1 stk" },
@@ -118,6 +127,7 @@ const meals = [
   {
     id: "kylling-fajitas",
     name: "Kylling fajitas",
+    category: "TexMex",
     ingredients: [
       { item: "Kyllingbryst", amount: "500 g" },
       { item: "Paprika", amount: "2 stk" },
@@ -130,6 +140,7 @@ const meals = [
   {
     id: "pizza-margherita",
     name: "Pizza margherita",
+    category: "Vegetar",
     ingredients: [
       { item: "Pizzadeig", amount: "1 base" },
       { item: "Pizzasaus", amount: "1 glass" },
@@ -141,6 +152,7 @@ const meals = [
   {
     id: "biff-stroganoff",
     name: "Biff stroganoff",
+    category: "Kjøtt",
     ingredients: [
       { item: "Biffstrimler", amount: "500 g" },
       { item: "Sopp", amount: "200 g" },
@@ -153,6 +165,7 @@ const meals = [
   {
     id: "chili-con-carne",
     name: "Chili con carne",
+    category: "Kjøtt",
     ingredients: [
       { item: "Kjøttdeig", amount: "500 g" },
       { item: "Hakket tomat", amount: "2 bokser" },
@@ -165,6 +178,7 @@ const meals = [
   {
     id: "falafel-pita",
     name: "Falafel i pitabrød",
+    category: "Vegetar",
     ingredients: [
       { item: "Falafel", amount: "1 pakke" },
       { item: "Pitabrød", amount: "6 stk" },
@@ -176,6 +190,7 @@ const meals = [
   {
     id: "risotto-sopp",
     name: "Kremet sopprisotto",
+    category: "Vegetar",
     ingredients: [
       { item: "Risottoris", amount: "350 g" },
       { item: "Sopp", amount: "250 g" },
@@ -188,6 +203,7 @@ const meals = [
   {
     id: "wok-nudler",
     name: "Wok med nudler",
+    category: "Asiatisk",
     ingredients: [
       { item: "Kylling eller tofu", amount: "400 g" },
       { item: "Wokgrønnsaker", amount: "1 pose" },
@@ -199,6 +215,7 @@ const meals = [
   {
     id: "omelett",
     name: "Omelett med grønnsaker",
+    category: "Vegetar",
     ingredients: [
       { item: "Egg", amount: "6 stk" },
       { item: "Paprika", amount: "1 stk" },
@@ -210,6 +227,7 @@ const meals = [
   {
     id: "pannekaker",
     name: "Pannekaker med blåbær",
+    category: "Vegetar",
     ingredients: [
       { item: "Melk", amount: "6 dl" },
       { item: "Hvetemel", amount: "3 dl" },
@@ -221,6 +239,7 @@ const meals = [
   {
     id: "laks-pasta",
     name: "Kremet pasta med laks",
+    category: "Fisk",
     ingredients: [
       { item: "Pasta", amount: "400 g" },
       { item: "Laksebiter", amount: "400 g" },
@@ -232,6 +251,7 @@ const meals = [
   {
     id: "caesarsalat",
     name: "Cæsarsalat med kylling",
+    category: "Salat",
     ingredients: [
       { item: "Kyllingbryst", amount: "400 g" },
       { item: "Romaine eller hjertesalat", amount: "2 stk" },
@@ -243,6 +263,7 @@ const meals = [
   {
     id: "torsk-curry",
     name: "Mild torskecurry",
+    category: "Fisk",
     ingredients: [
       { item: "Torskefileter", amount: "500 g" },
       { item: "Kokosmelk", amount: "1 boks" },
@@ -254,6 +275,7 @@ const meals = [
   {
     id: "pulled-pork-tacos",
     name: "Pulled pork tacos",
+    category: "TexMex",
     ingredients: [
       { item: "Pulled pork", amount: "1 pakke" },
       { item: "Tortillalefser", amount: "8 stk" },
@@ -265,6 +287,7 @@ const meals = [
   {
     id: "shakshuka",
     name: "Shakshuka",
+    category: "Vegetar",
     ingredients: [
       { item: "Egg", amount: "4-6 stk" },
       { item: "Hakket tomat", amount: "2 bokser" },
@@ -276,6 +299,7 @@ const meals = [
   {
     id: "fiskesuppe",
     name: "Kremet fiskesuppe",
+    category: "Fisk",
     ingredients: [
       { item: "Hvit fisk", amount: "500 g" },
       { item: "Gulrot", amount: "2 stk" },
@@ -287,6 +311,7 @@ const meals = [
   {
     id: "gryterett",
     name: "Enkel kjøttgryte",
+    category: "Kjøtt",
     ingredients: [
       { item: "Kjøttdeig", amount: "500 g" },
       { item: "Poteter", amount: "600 g" },
@@ -298,6 +323,7 @@ const meals = [
   {
     id: "vegetar-taco",
     name: "Vegetar taco med bønner",
+    category: "Vegetar",
     ingredients: [
       { item: "Svartbønner", amount: "1 boks" },
       { item: "Mais", amount: "1 boks" },
@@ -309,6 +335,7 @@ const meals = [
   {
     id: "burger",
     name: "Hjemmelagde burgere",
+    category: "Kjøtt",
     ingredients: [
       { item: "Kjøttdeig", amount: "600 g" },
       { item: "Burgerbrød", amount: "4-6 stk" },
@@ -343,6 +370,7 @@ let planState = migratePlanState(loadState(storageKeys.plan, {}));
 let shoppingList = loadState(storageKeys.list, []);
 let remindersState = loadState(storageKeys.reminders, {});
 const mealFilters = {};
+const mealCategoryFilters = {};
 
 function loadState(key, fallback) {
   try {
@@ -409,6 +437,7 @@ function buildPlanner() {
     const dayState = planState[day.key] || { meal: "", servings: defaultServings };
     const selected = dayState.meal || "";
     const filterValue = mealFilters[day.key] || "";
+    const filterCategory = mealCategoryFilters[day.key] || "";
 
     card.innerHTML = `
       <div class="day-card__header">
@@ -421,12 +450,18 @@ function buildPlanner() {
           <input class="input" type="text" placeholder="Søk etter rett" value="${filterValue}" data-day-filter="${day.key}" aria-label="Søk etter rett for ${day.label}">
           <div class="input-with-action">
             <select class="select" id="select-${day.key}" data-day="${day.key}">
-              ${renderMealOptions(filterValue, selected)}
+              ${renderMealOptions(filterValue, selected, filterCategory)}
             </select>
             <button class="button button--ghost button--icon" data-action="clear-meal" data-day="${day.key}" aria-label="Fjern valgt rett">−</button>
           </div>
+          <div class="input-row">
+            <label class="input-label" for="category-${day.key}">Kategori</label>
+            <select class="select" id="category-${day.key}" data-day-category="${day.key}">
+              ${renderCategoryOptions(filterCategory)}
+            </select>
+          </div>
           <div class="meal-results" data-results="${day.key}">
-            ${renderMealResults(filterValue, selected, day.key)}
+            ${renderMealResults(filterValue, selected, day.key, filterCategory)}
           </div>
         </div>
         <div class="input-row">
@@ -511,9 +546,9 @@ function renderShoppingList() {
     .join("");
 }
 
-function renderMealOptions(filterValue, selected) {
+function renderMealOptions(filterValue, selected, category) {
   const query = (filterValue || "").trim().toLowerCase();
-  let filtered = meals.filter((meal) => meal.name.toLowerCase().includes(query));
+  let filtered = filterMeals(query, category);
   if (selected && !filtered.find((m) => m.id === selected)) {
     const selectedMeal = meals.find((m) => m.id === selected);
     if (selectedMeal) filtered = [selectedMeal, ...filtered];
@@ -530,14 +565,14 @@ function renderMealOptions(filterValue, selected) {
   return `<option value="">- Ingen valgt -</option>${options}`;
 }
 
-function renderMealResults(filterValue, selected, dayKey) {
+function renderMealResults(filterValue, selected, dayKey, category) {
   const query = (filterValue || "").trim().toLowerCase();
-  if (!query) {
-    return `<div class="meal-note">Skriv for å søke i rettene.</div>`;
+  if (!query && !category) {
+    return `<div class="meal-note">Skriv eller velg kategori for å finne retter.</div>`;
   }
-  const filtered = meals.filter((meal) => meal.name.toLowerCase().includes(query));
+  const filtered = filterMeals(query, category);
   if (!filtered.length) {
-    return `<div class="meal-note">Ingen treff på "${filterValue}".</div>`;
+    return `<div class="meal-note">Ingen treff.</div>`;
   }
   return filtered
     .slice(0, 8)
@@ -673,6 +708,23 @@ function removeByKey(key) {
   }
   saveState(storageKeys.list, shoppingList);
   renderShoppingList();
+}
+
+function filterMeals(query, category) {
+  return meals.filter((meal) => {
+    const matchesName = meal.name.toLowerCase().includes(query);
+    const matchesCategory = !category || meal.category === category;
+    return matchesName && matchesCategory;
+  });
+}
+
+function renderCategoryOptions(selected) {
+  const cats = Array.from(new Set(meals.map((m) => m.category).filter(Boolean))).sort();
+  const base = `<option value="">Alle kategorier</option>`;
+  const opts = cats
+    .map((cat) => `<option value="${cat}" ${cat === selected ? "selected" : ""}>${cat}</option>`)
+    .join("");
+  return base + opts;
 }
 
 function withServings(ingredient, servings) {
@@ -835,11 +887,28 @@ dayGrid.addEventListener("input", (event) => {
   const select = document.querySelector(`select[data-day="${dayKey}"]`);
   const dayState = planState[dayKey] || { meal: "", servings: defaultServings };
   if (select) {
-    select.innerHTML = renderMealOptions(value, dayState.meal);
+    select.innerHTML = renderMealOptions(value, dayState.meal, mealCategoryFilters[dayKey] || "");
   }
   const resultsEl = document.querySelector(`[data-results="${dayKey}"]`);
   if (resultsEl) {
-    resultsEl.innerHTML = renderMealResults(value, dayState.meal, dayKey);
+    resultsEl.innerHTML = renderMealResults(value, dayState.meal, dayKey, mealCategoryFilters[dayKey] || "");
+  }
+});
+
+dayGrid.addEventListener("change", (event) => {
+  const target = event.target;
+  if (!target.matches("select[data-day-category]")) return;
+  const dayKey = target.getAttribute("data-day-category");
+  const category = target.value || "";
+  mealCategoryFilters[dayKey] = category;
+  const select = document.querySelector(`select[data-day="${dayKey}"]`);
+  const dayState = planState[dayKey] || { meal: "", servings: defaultServings };
+  if (select) {
+    select.innerHTML = renderMealOptions(mealFilters[dayKey] || "", dayState.meal, category);
+  }
+  const resultsEl = document.querySelector(`[data-results="${dayKey}"]`);
+  if (resultsEl) {
+    resultsEl.innerHTML = renderMealResults(mealFilters[dayKey] || "", dayState.meal, dayKey, category);
   }
 });
 
