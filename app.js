@@ -996,6 +996,14 @@ const expenseAmount = document.getElementById("expense-amount");
 const expenseDate = document.getElementById("expense-date");
 const expenseCategory = document.getElementById("expense-category");
 const expenseNote = document.getElementById("expense-note");
+const receiptForm = document.getElementById("receipt-form");
+const receiptFile = document.getElementById("receipt-file");
+const receiptPreview = document.getElementById("receipt-preview");
+const receiptAmount = document.getElementById("receipt-amount");
+const receiptDate = document.getElementById("receipt-date");
+const receiptCategory = document.getElementById("receipt-category");
+const receiptNote = document.getElementById("receipt-note");
+const receiptStatus = document.getElementById("receipt-status");
 let activeTab = "middagsplan";
 let activeDayPlan = dayOrder[0].key;
 
@@ -1491,6 +1499,15 @@ function currentMonthKey() {
   return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
 }
 
+function fileToDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
 function filterMeals(query, category) {
   return meals.filter((meal) => {
     const matchesName = meal.name.toLowerCase().includes(query);
@@ -1766,6 +1783,63 @@ expenseForm?.addEventListener("submit", (event) => {
   addExpense({ amount, date, category, note });
   expenseForm.reset();
   expenseDate.value = date;
+});
+
+receiptFile?.addEventListener("change", async () => {
+  const file = receiptFile.files?.[0];
+  if (!file) {
+    receiptPreview.innerHTML = "";
+    receiptStatus.textContent = "Ingen kvittering valgt.";
+    return;
+  }
+  const dataUrl = await fileToDataUrl(file);
+  receiptPreview.innerHTML = `<img src="${dataUrl}" alt="Kvittering">`;
+  receiptStatus.textContent = `Valgt: ${file.name}`;
+});
+
+receiptForm?.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const file = receiptFile.files?.[0];
+  if (!file) {
+    receiptStatus.textContent = "Velg et bilde først.";
+    return;
+  }
+  const amount = Number(receiptAmount.value);
+  if (Number.isNaN(amount) || amount <= 0) {
+    receiptStatus.textContent = "Beløp må fylles ut.";
+    return;
+  }
+  const date = receiptDate.value || new Date().toISOString().slice(0, 10);
+  const category = receiptCategory.value || "Annet";
+  const note = receiptNote.value || file.name;
+  receiptStatus.textContent = "Lagrer kvittering...";
+  const imageData = await fileToDataUrl(file);
+
+  // Oppdater budsjett lokalt
+  addExpense({ amount, date, category, note });
+
+  // Forsøk å sende til backend kvitteringslager
+  try {
+    await fetch("/api/receipts", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        amount,
+        date,
+        category,
+        note,
+        filename: file.name,
+        imageData
+      })
+    });
+    receiptStatus.textContent = "Kvittering lagret.";
+  } catch (err) {
+    console.error(err);
+    receiptStatus.textContent = "Lagret lokalt (backend ikke tilgjengelig).";
+  }
+
+  receiptForm.reset();
+  receiptPreview.innerHTML = "";
 });
 
 dayGrid.addEventListener("input", (event) => {

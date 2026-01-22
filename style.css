@@ -914,6 +914,68 @@ body {
 .expense-item__amount {
   font-weight: 800;
 }
+
+.receipt-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.receipt-upload {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.upload-box {
+  border: 1px dashed var(--stroke);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  text-align: center;
+  cursor: pointer;
+  display: grid;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.upload-box span {
+  font-weight: 700;
+}
+
+.upload-box small {
+  color: var(--muted);
+}
+
+.receipt-preview {
+  min-height: 60px;
+  border: 1px dashed var(--stroke);
+  border-radius: var(--radius-sm);
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  font-size: 13px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.receipt-preview img {
+  max-height: 120px;
+  object-fit: contain;
+}
+
+.receipt-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.receipt-status {
+  color: var(--muted);
+  font-size: 13px;
+}
 @media (min-width: 900px) {
   body {
     padding: 24px;
