@@ -692,6 +692,263 @@ const mealSteps = {
   ]
 };
 
+const mealStepsDetailed = {
+  taco: [
+    "Finhakk løk for ekstra smak og stek myk i litt olje.",
+    "Brun kjøttdeig, ha i tacomiks + en skvett vann, la småkoke 3-4 min.",
+    "Varm tortillalefser i ovn (180°C, 4-5 min) eller tørr panne.",
+    "Kutt salat, tomat, agurk og evt. rødløk; riv ost om nødvendig.",
+    "Sett frem alt på bordet, fyll lefser med kjøtt, grønt, ost, salsa/rømme.",
+    "Smak til med lime, jalapeños eller ekstra krydder."
+  ],
+  spaghetti: [
+    "Finhakk løk/hvitløk og gulrot i små terninger.",
+    "Brun kjøttdeig, tilsett løk/hvitløk/gulrot og stek 2-3 min.",
+    "Ha i hakket tomat og litt vann/kraft, la småkoke 10-15 min, smak til.",
+    "Kok spaghetti i godt saltet vann til al dente; spar litt pastavann.",
+    "Vend pasta med sausen, juster med pastavann for ønsket konsistens.",
+    "Server med parmesan og ev. basilikum/olivenolje."
+  ],
+  "kylling-ovnsbakt": [
+    "Forvarm ovn til 200°C varmluft.",
+    "Kutt poteter i terninger/skiver, paprika og rødløk i biter.",
+    "Vend poteter/grønnsaker i olje, salt/pepper (og paprikakrydder) på brett.",
+    "Legg kylling oppå, krydre lett, stek 25-35 min til kylling er gjennomstekt og poteter møre.",
+    "Vend litt på grønnsakene halvveis for jevn steking.",
+    "La hvile 3-5 min før servering."
+  ],
+  fiskekaker: [
+    "Kok poteter i saltet vann til møre.",
+    "Rasp gulrøtter, smak til råkost med litt sitron, salt og en klype sukker.",
+    "Stek fiskekaker i smør på middels varme til gylne og varme.",
+    "Server med poteter, råkost og ev. smeltet smør eller remulade.",
+    "Press litt sitron over rett før servering."
+  ],
+  curry: [
+    "Skjær kylling i biter, salte/peppre lett.",
+    "Brun kylling raskt i olje, ta ut av panna.",
+    "Stek curry paste 30 sek, tilsett kokosmelk og rør ut.",
+    "Legg kyllingen tilbake, småkok 8-10 min til gjennomkokt.",
+    "Ha i brokkoli og sukkererter de siste 3-4 minuttene for sprøhet.",
+    "Smak til med lime/soyasaus; server med ris."
+  ],
+  "pasta-pesto": [
+    "Kok pasta i saltet vann til al dente; spar 1-2 dl pastavann.",
+    "Rist pinjekjerner tørt i panne til gyllen; avkjøl lett.",
+    "Vend varm pasta med pesto og litt pastavann til kremet konsistens.",
+    "Tilsett cherrytomat og ruccola rett før servering.",
+    "Topp med pinjekjerner og ev. parmesan; smak til med sitron og pepper."
+  ],
+  suppe: [
+    "Skrell/kutt gulrot, potet og sellerirot i små terninger for kort koketid.",
+    "Kok opp buljong, tilsett grønnsakene og la småkoke til møre (15-20 min).",
+    "Skum av ved behov, smak til med salt/pepper og litt sitron.",
+    "Vil du ha den jevnere, stavmiks halvparten; behold biter for tygg.",
+    "Server med flatbrød og litt smør."
+  ],
+  lasagne: [
+    "Stek løk/hvitløk myk, brun kjøttdeig, tilsett tomat og småkok 10-15 min.",
+    "Lag evt. hvitsaus (smør+mjøl+melk) og rør inn litt ost, eller bruk bare ostelag.",
+    "I form: lag med kjøttsaus, lasagneplater, ost/hvitsaus i 3-4 lag.",
+    "Topp med ost, stek 30-35 min på 200°C til gyllen og boblete.",
+    "La hvile 5-10 min før du skjærer i den."
+  ],
+  "ovnsbakt-laks": [
+    "Forvarm ovn 200°C. Legg laks i form, krydre med salt/pepper og sitron.",
+    "Vend poteter/asparges i olje/salt, legg på brett eller i samme form.",
+    "Bak 15-20 min til laks flaker og poteter er møre.",
+    "Drypp litt sitron/olje over ved servering."
+  ],
+  "kylling-fajitas": [
+    "Skjær kylling, paprika og løk i strimler.",
+    "Stek kylling nesten gjennom, tilsett fajitakrydder + litt vann, la koke inn.",
+    "Stek paprika/løk kort for litt crunch.",
+    "Varm tortillalefser i ovn/panne.",
+    "Server med kylling/grønnsaker, rømme og lime."
+  ],
+  "pizza-margherita": [
+    "Forvarm ovn/steinbrett til maks varme (250°C+).",
+    "Kjevle deig tynt, legg på bakepapir.",
+    "Smør et tynt lag pizzasaus, fordel mozzarella i biter.",
+    "Stek 8-12 min til gyllen og sprø.",
+    "Topp med basilikum og en skvett olivenolje."
+  ],
+  "biff-stroganoff": [
+    "Tørk biffstrimler, brun raskt på høy varme, sett til side.",
+    "Stek løk og sopp til mykt, deglaser med litt vann/buljong.",
+    "Tilsett fløte og buljong, småkok 5-7 min.",
+    "Legg biffen tilbake, varm raskt.",
+    "Smak til med salt/pepper og evt. sennep; server med ris/potetmos."
+  ],
+  "chili-con-carne": [
+    "Brun kjøttdeig med chili/spisskummen.",
+    "Tilsett løk/hvitløk om ønsket, stek myk.",
+    "Ha i hakket tomat, småkok 10-15 min.",
+    "Rør inn bønner og mais, varm 5-7 min.",
+    "Smak til med salt/pepper/lime; server med ris."
+  ],
+  "falafel-pita": [
+    "Varm falafel etter anvisning (panne/ovn).",
+    "Varm pitabrød.",
+    "Rør sammen yoghurtdressing med sitron og hvitløk.",
+    "Fyll pita med salat, tomat og falafel.",
+    "Topp med dressing og ev. koriander/persille."
+  ],
+  "risotto-sopp": [
+    "Stek sopp gyllen i smør/olje, sett til side.",
+    "Stek løk myk i gryte, rør inn ris og varm til blank.",
+    "Spe med varm buljong litt av gangen, rør ofte (18-20 min).",
+    "Rør inn sopp, smør og parmesan mot slutten.",
+    "Smak til med salt/pepper/sitron, la hvile 2 min."
+  ],
+  "wok-nudler": [
+    "Kutt kylling/tofu i biter, grønnsaker i strimler.",
+    "Stek kylling/tofu, ta ut.",
+    "Wok grønnsaker kort på høy varme.",
+    "Tilsett ferdigkokte nudler og saus (soya + sesamolje), bland.",
+    "Ha kylling/tofu tilbake, varm opp, smak til med lime/chili."
+  ],
+  omelett: [
+    "Pisk egg med litt melk og salt/pepper.",
+    "Stek grønnsaker lett i panne.",
+    "Hell i egg, senk varmen, la stå til nesten stivnet.",
+    "Dryss ost, brett omeletten, la hvile 1 min."
+  ],
+  pannekaker: [
+    "Pisk egg, melk og mel til glatt røre; la hvile 10-15 min.",
+    "Stek tynne pannekaker i smør på middels varme, snu når kantene slipper.",
+    "Hold varme i ovn på lav varme, server med syltetøy/sukker."
+  ],
+  "laks-pasta": [
+    "Kok pasta al dente.",
+    "Stek laksebiter lett, krydre, sett til side.",
+    "Kok opp fløte/creme fraiche med sitron og pepper.",
+    "Vend inn spinat til den faller sammen.",
+    "Bland pasta og laks inn i sausen, juster med pastavann."
+  ],
+  caesarsalat: [
+    "Stek kylling, la hvile og skjær i skiver.",
+    "Riv salat, bland med dressing og krutonger.",
+    "Legg på kylling og parmesan.",
+    "Tilsett mer dressing/pepper etter smak."
+  ],
+  "torsk-curry": [
+    "Kok ris.",
+    "Kok opp kokosmelk med curry paste, smak til med salt.",
+    "Tilsett gulrotstaver, kok et par minutter.",
+    "Legg i torskebiter, trekk 6-8 min til fisken flaker.",
+    "Server med ris, evt. koriander."
+  ],
+  "pulled-pork-tacos": [
+    "Varm pulled pork i panne med BBQ-saus.",
+    "Finsnitt rødkål, vend med litt lime/salt.",
+    "Varm tortillalefser.",
+    "Fyll med kjøtt, mais, rødkål; topp med ekstra saus."
+  ],
+  shakshuka: [
+    "Stek løk/paprika myk i olje.",
+    "Tilsett krydder og hakket tomat, småkok 10 min.",
+    "Lag fordypninger, knekk i egg.",
+    "Dekk til og la egg stivne 5-8 min på lav varme.",
+    "Server med brød."
+  ],
+  fiskesuppe: [
+    "Stek grønnsaker i terninger kort i smør/olje.",
+    "Tilsett buljong, kok til nesten møre.",
+    "Ha i fløte og fisk, trekk 6-8 min uten å koke.",
+    "Smak til med sitron, salt, pepper."
+  ],
+  gryterett: [
+    "Brun kjøttdeig, tilsett hakket løk.",
+    "Ha i poteter/gulrøtter i terninger, hell på buljong.",
+    "La småkoke 20-25 min til poteter er møre.",
+    "Smak til med salt/pepper."
+  ],
+  "vegetar-taco": [
+    "Skyll bønner/mais, varm i panne med tacokrydder.",
+    "Kutt paprika/avokado.",
+    "Varm tortillalefser.",
+    "Fyll lefser med bønner, grønnsaker og topp med salsa/ost."
+  ],
+  burger: [
+    "Form burgere, krydre godt, stek/grill til ønsket stekegrad.",
+    "Varm burgerbrød.",
+    "Monter med dressing, salat/tomat, burger og ost.",
+    "Server med ønsket tilbehør."
+  ],
+  "pad-thai": [
+    "Bløtlegg/kok risnudler, skyll i kaldt vann.",
+    "Stek kyllingbiter, skyv til side, stek egg raskt.",
+    "Tilsett pad thai-saus og nudler, vend godt.",
+    "Bland inn bønnespirer og vårløk, varm raskt.",
+    "Server med peanøtter og lime."
+  ],
+  ramen: [
+    "Kok kraft med soyasaus; hold varm.",
+    "Stek svinestrimler lett.",
+    "Kok ramen-nudler i kraften til al dente.",
+    "Anrett nudler med kraft, topp med svin, pak choi og kokt egg.",
+    "Dryss vårløk over."
+  ],
+  "fajita-bowl": [
+    "Stek kylling med fajitakrydder.",
+    "Kok ris.",
+    "Kutt paprika og avokado, skyll mais/bønner.",
+    "Anrett i bolle med ris, kylling, grønnsaker, bønner og lime."
+  ],
+  "fiskeboller-i-karrisaus": [
+    "Smelt smør, rør inn mel, spe med melk til saus.",
+    "Krydre med karri, kok 2-3 min.",
+    "Ha i fiskeboller og varm opp.",
+    "Server med kokte poteter og gulrøtter."
+  ],
+  "potetmos-med-kjottkaker": [
+    "Kok poteter, mos med melk/smør, smak til.",
+    "Varm kjøttkaker og erter.",
+    "Varm brun saus etter anvisning.",
+    "Server kjøttkaker med mos, erter og saus."
+  ],
+  "grillet-cheese": [
+    "Smør brødskiver med smør på utsiden.",
+    "Legg ost mellom to skiver, stek gyllen på begge sider.",
+    "Tomatsuppe: stek løk/hvitløk, tilsett tomat og litt fløte, småkok 10 min, smak til.",
+    "Server suppe med sandwich ved siden av."
+  ],
+  "kremet-brokkolipasta": [
+    "Kok pasta al dente, spar pastavann.",
+    "Kok brokkoli 2-3 min, avkjøl lett.",
+    "Stek hvitløk i olje, tilsett fløte/creme fraiche og litt sitron.",
+    "Vend inn pasta og brokkoli, juster med pastavann, topp med parmesan."
+  ],
+  "torsk-med-bacon": [
+    "Kok poteter, lag mos med melk/smør.",
+    "Stek bacon sprøtt.",
+    "Bak torsk på 200°C i 10-12 min med litt olje/salt/pepper.",
+    "Server torsk med bacon, gulrøtter og potetmos."
+  ],
+  "indisk-daal": [
+    "Skyll linser. Stek løk, hvitløk, ingefær i olje med spisskummen/gurkemeie.",
+    "Tilsett linser, tomat, kokosmelk og litt vann.",
+    "Småkok 15-20 min til linsene er myke.",
+    "Smak til med salt, pepper, chili og sitron.",
+    "Server med ris."
+  ],
+  enchiladas: [
+    "Stek kyllingstrimler, bland med hakket tomat og mais.",
+    "Fordel i tortillalefser, rull og legg i form.",
+    "Hell over enchiladasaus, topp med ost.",
+    "Bak 15-20 min på 200°C til gyllen.",
+    "Server med rømme/salsa."
+  ],
+  "cobb-salat": [
+    "Stek kylling og bacon, skjær i biter.",
+    "Kok egg til smilende, del i båter.",
+    "Kutt avokado og tomat.",
+    "Riv salat, anrett med kylling, bacon, egg, avokado, tomat og ost.",
+    "Server med dressing ved siden av."
+  ]
+};
+
 const storageKeys = {
   plan: "progresjon.weeklyPlanner.plan",
   list: "progresjon.weeklyPlanner.shoppingList",
@@ -1281,7 +1538,7 @@ function openStepsOverlay(dayKey) {
   const dayState = planState[dayKey] || { meal: "", servings: defaultServings };
   const meal = meals.find((m) => m.id === dayState.meal);
   if (!meal) return;
-  const steps = mealSteps[meal.id] || [];
+  const steps = mealStepsDetailed[meal.id] || mealSteps[meal.id] || [];
   stepsTitleEl.textContent = meal.name;
   stepsSubtitleEl.textContent = `${dayState.servings} ${dayState.servings === 1 ? "person" : "personer"} · ${meal.category || "Uten kategori"}`;
   stepsBodyEl.innerHTML = `
