@@ -1,0 +1,11 @@
+{
+  "plan": {},
+  "shoppingList": [],
+  "reminders": {},
+  "budget": {
+    "month": "2024-01",
+    "goal": 4000,
+    "expenses": []
+  },
+  "receipts": []
+}
