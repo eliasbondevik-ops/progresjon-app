@@ -353,6 +353,18 @@ const storageKeys = {
 };
 const defaultServings = 4;
 
+const restSuggestionMap = {
+  agurk: ["falafel-pita", "caesarsalat", "vegetar-taco"],
+  paprika: ["kylling-fajitas", "wok-nudler", "shakshuka"],
+  rømme: ["taco", "pulled-pork-tacos"],
+  pesto: ["pasta-pesto", "laks-pasta"],
+  "revet ost": ["lasagne", "pizza-margherita", "burger"],
+  spinat: ["omelett", "laks-pasta", "wok-nudler"],
+  sitron: ["ovnsbakt-laks", "laks-pasta", "fiskesuppe"],
+  tortillalefser: ["taco", "vegetar-taco", "pulled-pork-tacos"],
+  mais: ["chili-con-carne", "pulled-pork-tacos", "vegetar-taco"]
+};
+
 const dayGrid = document.getElementById("day-grid");
 const shoppingListEl = document.getElementById("shopping-list");
 const clearListButton = document.getElementById("clear-list");
@@ -394,11 +406,12 @@ function migratePlanState(state) {
   const migrated = {};
   Object.entries(state || {}).forEach(([dayKey, value]) => {
     if (typeof value === "string") {
-      migrated[dayKey] = { meal: value, servings: defaultServings };
+      migrated[dayKey] = { meal: value, servings: defaultServings, restSource: null };
     } else if (value && typeof value === "object") {
       migrated[dayKey] = {
         meal: value.meal || "",
-        servings: value.servings || defaultServings
+        servings: value.servings || defaultServings,
+        restSource: value.restSource || null
       };
     }
   });
@@ -519,6 +532,7 @@ function renderIngredientsContent(mealId, dayKey, servings = defaultServings) {
     <p class="meal-note">Mengder tilpasset for ${servings} ${servings === 1 ? "person" : "personer"}.</p>
     <ul class="ingredient-list">${list}</ul>
     <button class="button add-all" data-action="add-all" data-day="${dayKey}" type="button">Legg alle i handlelisten</button>
+    ${renderRestTips(meal, dayKey)}
   `;
 }
 
@@ -544,6 +558,34 @@ function renderShoppingList() {
     `
     )
     .join("");
+}
+
+function renderRestTips(meal, dayKey) {
+  const suggestions = getRestSuggestions(meal, dayKey);
+  if (!suggestions.length) {
+    return "";
+  }
+  const nextDay = nextDayKey(dayKey);
+  return `
+    <div class="rest-tips">
+      <div class="rest-tips__header">
+        <span class="rest-tips__title">Restetips</span>
+        <span class="rest-tips__hint">Planlegg til ${labelForDay(nextDay)}</span>
+      </div>
+      <div class="rest-tips__list">
+        ${suggestions
+          .map(
+            (sugg) => `
+              <button class="rest-tip" data-action="plan-rest" data-day="${dayKey}" data-next="${nextDay}" data-meal="${sugg.id}">
+                <span class="rest-tip__name">${sugg.name}</span>
+                <span class="rest-tip__tag">${sugg.category || "Uten kategori"}</span>
+              </button>
+            `
+          )
+          .join("")}
+      </div>
+    </div>
+  `;
 }
 
 function renderMealOptions(filterValue, selected, category) {
@@ -592,7 +634,7 @@ function renderDayPlan() {
   if (meal) {
     dayMealEl.innerHTML = `
       <div class="day-plan__meal-title">${meal.name}</div>
-      <div class="day-plan__meal-note">${dayState.servings} ${dayState.servings === 1 ? "person" : "personer"} · ${meal.note || "Ingen note"} </div>
+      <div class="day-plan__meal-note">${dayState.servings} ${dayState.servings === 1 ? "person" : "personer"} · ${meal.note || "Ingen note"} ${dayState.restSource ? "· planlagt for å bruke rester" : ""}</div>
     `;
   } else {
     dayMealEl.innerHTML = `<div class="meal-note">Ingen middag valgt for ${labelForDay(activeDayPlan)} enda.</div>`;
@@ -620,7 +662,7 @@ function renderDayPlan() {
 
 function updateMeal(dayKey, mealId) {
   const current = planState[dayKey] || { servings: defaultServings };
-  planState[dayKey] = { meal: mealId, servings: current.servings || defaultServings };
+  planState[dayKey] = { meal: mealId, servings: current.servings || defaultServings, restSource: null };
   saveState(storageKeys.plan, planState);
   const ingredientsEl = document.querySelector(`[data-ingredients="${dayKey}"]`);
   if (ingredientsEl) {
@@ -727,6 +769,28 @@ function renderCategoryOptions(selected) {
   return base + opts;
 }
 
+function getRestSuggestions(meal, dayKey) {
+  if (!meal) return [];
+  const lowerIngredients = (meal.ingredients || []).map((ing) => ing.item.toLowerCase());
+  const matches = Object.entries(restSuggestionMap).flatMap(([key, suggestions]) => {
+    const hit = lowerIngredients.some((name) => name.includes(key));
+    if (!hit) return [];
+    return suggestions;
+  });
+  const unique = Array.from(new Set(matches)).filter((id) => id !== meal.id);
+  const suggestions = unique
+    .map((id) => meals.find((m) => m.id === id))
+    .filter(Boolean)
+    .slice(0, 3);
+  return suggestions;
+}
+
+function nextDayKey(dayKey) {
+  const idx = dayOrder.findIndex((d) => d.key === dayKey);
+  if (idx === -1) return dayOrder[0].key;
+  return dayOrder[(idx + 1) % dayOrder.length].key;
+}
+
 function withServings(ingredient, servings) {
   return {
     ...ingredient,
@@ -766,7 +830,7 @@ function clearShoppingList() {
 
 function clearMeal(dayKey) {
   const current = planState[dayKey] || { servings: defaultServings };
-  planState[dayKey] = { meal: "", servings: current.servings || defaultServings };
+  planState[dayKey] = { meal: "", servings: current.servings || defaultServings, restSource: null };
   saveState(storageKeys.plan, planState);
   const select = document.querySelector(`select[data-day="${dayKey}"]`);
   if (select) {
@@ -815,6 +879,19 @@ function addReminder(text) {
   remindersState = { ...remindersState, [activeDayPlan]: [...dayList, item] };
   saveState(storageKeys.reminders, remindersState);
   renderDayPlan();
+}
+
+function planRestSuggestion(fromDay, toDay, mealId) {
+  const fromMeal = planState[fromDay]?.meal || "";
+  const toState = planState[toDay] || { servings: defaultServings };
+  planState[toDay] = {
+    meal: mealId,
+    servings: toState.servings || defaultServings,
+    restSource: { fromDay, fromMeal }
+  };
+  saveState(storageKeys.plan, planState);
+  refreshDayIngredients(toDay);
+  buildPlanner();
 }
 
 function removeReminder(id) {
@@ -875,6 +952,13 @@ dayGrid.addEventListener("click", (event) => {
   if (target.dataset.action === "clear-meal") {
     const dayKey = target.getAttribute("data-day");
     clearMeal(dayKey);
+  }
+
+  if (target.dataset.action === "plan-rest") {
+    const fromDay = target.getAttribute("data-day");
+    const toDay = target.getAttribute("data-next");
+    const mealId = target.getAttribute("data-meal");
+    planRestSuggestion(fromDay, toDay, mealId);
   }
 });
 
