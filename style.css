@@ -1,15 +1,15 @@
 :root {
   color-scheme: light;
-  --bg: #0f172a;
-  --bg-soft: #152042;
-  --panel: rgba(255, 255, 255, 0.06);
-  --card: rgba(255, 255, 255, 0.07);
-  --accent: #8ef1a8;
-  --accent-strong: #43d97a;
-  --text: #e9edf7;
-  --muted: #cdd5e7;
-  --stroke: rgba(255, 255, 255, 0.12);
-  --shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+  --bg: #0c1326;
+  --bg-soft: #101a34;
+  --panel: rgba(255, 255, 255, 0.08);
+  --card: rgba(255, 255, 255, 0.12);
+  --accent: #7de2ff;
+  --accent-strong: #ffb47a;
+  --text: #f6f7fb;
+  --muted: #c7d0e4;
+  --stroke: rgba(255, 255, 255, 0.14);
+  --shadow: 0 18px 50px rgba(7, 11, 26, 0.45);
   --radius-lg: 18px;
   --radius-md: 12px;
   --radius-sm: 9px;
@@ -24,7 +24,8 @@
 body {
   margin: 0;
   font-family: "Space Grotesk", "Helvetica Neue", Arial, sans-serif;
-  background: radial-gradient(120% 120% at 0% 0%, #173165 0%, #0f172a 55%, #0b1221 100%);
+  background: linear-gradient(135deg, #0c1326 0%, #0f1d3c 55%, #0a1022 100%);
+  background-attachment: fixed;
   color: var(--text);
   min-height: 100vh;
   padding: 16px;
@@ -43,7 +44,7 @@ body {
   text-transform: uppercase;
   letter-spacing: 0.08em;
   font-size: 12px;
-  color: var(--accent);
+  color: var(--accent-strong);
   font-weight: 600;
 }
 
@@ -64,19 +65,19 @@ body {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
   gap: 10px;
-  margin: 6px 0 14px;
+  margin: 10px 0 16px;
 }
 
 .tab-card {
   border: 1px solid var(--stroke);
-  background: rgba(255, 255, 255, 0.04);
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
   border-radius: var(--radius-md);
   padding: 12px;
   text-align: left;
   color: var(--text);
   cursor: pointer;
   box-shadow: var(--shadow);
-  backdrop-filter: blur(6px);
+  backdrop-filter: blur(8px);
   transition: transform 140ms ease, box-shadow 140ms ease, border-color 140ms ease;
 }
 
@@ -87,8 +88,8 @@ body {
 
 .tab-card.is-active {
   border-color: var(--accent);
-  box-shadow: 0 18px 50px rgba(142, 241, 168, 0.26);
-  background: linear-gradient(120deg, rgba(142, 241, 168, 0.18), rgba(255, 255, 255, 0.08));
+  box-shadow: 0 18px 50px rgba(125, 226, 255, 0.35);
+  background: linear-gradient(120deg, rgba(125, 226, 255, 0.2), rgba(255, 180, 122, 0.16));
 }
 
 .tab-card__label {
@@ -158,6 +159,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.28);
 }
 
 .day-card__header {
@@ -171,7 +173,7 @@ body {
   height: 12px;
   border-radius: 50%;
   background: linear-gradient(120deg, var(--accent), var(--accent-strong));
-  box-shadow: 0 0 0 4px rgba(142, 241, 168, 0.16);
+  box-shadow: 0 0 0 4px rgba(125, 226, 255, 0.2);
 }
 
 .day-card__title {
@@ -206,7 +208,7 @@ body {
 
 .select:focus {
   border-color: var(--accent);
-  box-shadow: 0 0 0 4px rgba(142, 241, 168, 0.18);
+  box-shadow: 0 0 0 4px rgba(125, 226, 255, 0.2);
 }
 
 .ingredients {
@@ -245,6 +247,7 @@ body {
   border-radius: var(--radius-sm);
   padding: 10px 12px;
   gap: 10px;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.2);
 }
 
 .ingredient__text {
@@ -272,14 +275,14 @@ body {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  color: #0f172a;
+  color: #0c1020;
   background: linear-gradient(120deg, var(--accent), var(--accent-strong));
   transition: transform 120ms ease, box-shadow 120ms ease;
 }
 
 .button:hover {
   transform: translateY(-1px);
-  box-shadow: 0 10px 30px rgba(67, 217, 122, 0.35);
+  box-shadow: 0 12px 34px rgba(255, 180, 122, 0.35);
 }
 
 .button:active {
@@ -303,13 +306,13 @@ body {
   min-height: 42px;
   border-radius: 12px;
   border: 1px solid var(--accent);
-  background: rgba(142, 241, 168, 0.12);
+  background: rgba(125, 226, 255, 0.16);
   color: var(--accent);
   font-size: 18px;
 }
 
 .pill-button:hover {
-  box-shadow: 0 6px 20px rgba(142, 241, 168, 0.2);
+  box-shadow: 0 10px 26px rgba(125, 226, 255, 0.25);
 }
 
 .add-all {
@@ -358,12 +361,12 @@ body {
 }
 
 .shopping-item__count {
-  background: rgba(142, 241, 168, 0.16);
-  color: var(--accent);
+  background: rgba(125, 226, 255, 0.16);
+  color: var(--accent-strong);
   padding: 6px 10px;
   border-radius: 999px;
   font-weight: 700;
-  border: 1px solid rgba(142, 241, 168, 0.4);
+  border: 1px solid rgba(255, 180, 122, 0.5);
 }
 
 .empty-state {
