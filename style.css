@@ -383,6 +383,18 @@ body {
   border: 1px solid rgba(255, 180, 122, 0.5);
 }
 
+.shopping-item__actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.button--icon {
+  padding: 8px 11px;
+  min-width: 0;
+  border-radius: 10px;
+}
+
 .empty-state {
   color: var(--muted);
   padding: 8px 0;

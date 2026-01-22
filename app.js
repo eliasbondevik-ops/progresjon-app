@@ -253,7 +253,10 @@ function renderShoppingList() {
           <span class="shopping-item__name">${entry.item}</span>
           <span class="shopping-item__meta">${entry.amount || "Mengde ikke spesifisert"} · ${entry.sources.join(", ")}</span>
         </div>
-        <span class="shopping-item__count">x${entry.count}</span>
+        <div class="shopping-item__actions">
+          <span class="shopping-item__count">x${entry.count}</span>
+          <button class="button button--ghost button--icon" data-action="remove-shopping" data-key="${entry.key}" aria-label="Fjern ${entry.item}">−</button>
+        </div>
       </li>
     `
     )
@@ -336,6 +339,17 @@ function removeFromShoppingList(ingredient, mealName, dayKey) {
 function labelForDay(key) {
   const found = dayOrder.find((day) => day.key === key);
   return found ? found.label : key;
+}
+
+function removeByKey(key) {
+  const existing = shoppingList.find((entry) => entry.key === key);
+  if (!existing) return;
+  existing.count -= 1;
+  if (existing.count <= 0) {
+    shoppingList = shoppingList.filter((entry) => entry.key !== key);
+  }
+  saveState(storageKeys.list, shoppingList);
+  renderShoppingList();
 }
 
 function withServings(ingredient, servings) {
@@ -441,6 +455,14 @@ document.querySelector(".topbar")?.addEventListener("click", (event) => {
   if (tabName && tabName !== activeTab) {
     setActiveTab(tabName);
   }
+});
+
+shoppingListEl.addEventListener("click", (event) => {
+  const button = event.target.closest("[data-action='remove-shopping']");
+  if (!button) return;
+  const key = button.getAttribute("data-key");
+  if (!key) return;
+  removeByKey(key);
 });
 
 buildPlanner();
