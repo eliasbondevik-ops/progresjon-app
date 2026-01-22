@@ -343,6 +343,159 @@ const meals = [
       { item: "Salat og tomat", amount: "Til servering" },
       { item: "Dressing", amount: "Etter smak" }
     ]
+  },
+  {
+    id: "pad-thai",
+    name: "Pad thai med kylling",
+    category: "Asiatisk",
+    ingredients: [
+      { item: "Risnudler", amount: "300 g" },
+      { item: "Kyllingbryst", amount: "400 g" },
+      { item: "Egg", amount: "2 stk" },
+      { item: "Bønnespirer", amount: "1 pose" },
+      { item: "Vårløk", amount: "3 stk" },
+      { item: "Pad thai-saus", amount: "1 flaske" },
+      { item: "Peanøtter", amount: "1 pose" },
+      { item: "Lime", amount: "1 stk" }
+    ]
+  },
+  {
+    id: "ramen",
+    name: "Ramen med svin",
+    category: "Asiatisk",
+    ingredients: [
+      { item: "Ramen-nudler", amount: "4 porsjoner" },
+      { item: "Svin strimlet", amount: "400 g" },
+      { item: "Grønnsakskraft", amount: "1 liter" },
+      { item: "Soyasaus", amount: "3 ss" },
+      { item: "Egg", amount: "4 stk" },
+      { item: "Pak choi", amount: "2 stk" },
+      { item: "Vårløk", amount: "3 stk" }
+    ]
+  },
+  {
+    id: "fajita-bowl",
+    name: "Fajita bowl",
+    category: "TexMex",
+    ingredients: [
+      { item: "Kyllingbryst", amount: "400 g" },
+      { item: "Ris", amount: "400 g" },
+      { item: "Paprika", amount: "2 stk" },
+      { item: "Mais", amount: "1 boks" },
+      { item: "Sorte bønner", amount: "1 boks" },
+      { item: "Fajitakrydder", amount: "1 pose" },
+      { item: "Avokado", amount: "1 stk" },
+      { item: "Lime", amount: "1 stk" }
+    ]
+  },
+  {
+    id: "fiskeboller-i-karrisaus",
+    name: "Fiskeboller i karrisaus",
+    category: "Fisk",
+    ingredients: [
+      { item: "Fiskeboller", amount: "1 boks" },
+      { item: "Poteter", amount: "700 g" },
+      { item: "Gulrøtter", amount: "3 stk" },
+      { item: "Smør", amount: "2 ss" },
+      { item: "Hvetemel", amount: "2 ss" },
+      { item: "Melk", amount: "5 dl" },
+      { item: "Karripulver", amount: "1-2 ts" }
+    ]
+  },
+  {
+    id: "potetmos-med-kjottkaker",
+    name: "Potetmos med kjøttkaker",
+    category: "Kjøtt",
+    ingredients: [
+      { item: "Kjøttkaker", amount: "8 stk" },
+      { item: "Poteter", amount: "800 g" },
+      { item: "Melk", amount: "1.5 dl" },
+      { item: "Smør", amount: "2 ss" },
+      { item: "Erter", amount: "1 pose frosne" },
+      { item: "Brun saus", amount: "1 pose" }
+    ]
+  },
+  {
+    id: "grillet-cheese",
+    name: "Grilled cheese og tomatsuppe",
+    category: "Vegetar",
+    ingredients: [
+      { item: "Brødskiver", amount: "8 stk" },
+      { item: "Skivet ost", amount: "8 skiver" },
+      { item: "Smør", amount: "2 ss" },
+      { item: "Hakket tomat", amount: "2 bokser" },
+      { item: "Fløte", amount: "1 dl" },
+      { item: "Løk", amount: "1 stk" },
+      { item: "Hvitløk", amount: "2 fedd" }
+    ]
+  },
+  {
+    id: "kremet-brokkolipasta",
+    name: "Kremet brokkolipasta",
+    category: "Pasta",
+    ingredients: [
+      { item: "Pasta", amount: "400 g" },
+      { item: "Brokkoli", amount: "1 stor" },
+      { item: "Fløte eller creme fraiche", amount: "2 dl" },
+      { item: "Hvitløk", amount: "2 fedd" },
+      { item: "Parmesan", amount: "40 g" },
+      { item: "Sitron", amount: "1 stk" }
+    ]
+  },
+  {
+    id: "torsk-med-bacon",
+    name: "Torsk med bacon og potetmos",
+    category: "Fisk",
+    ingredients: [
+      { item: "Torskefileter", amount: "500 g" },
+      { item: "Bacon", amount: "150 g" },
+      { item: "Poteter", amount: "800 g" },
+      { item: "Melk", amount: "1.5 dl" },
+      { item: "Smør", amount: "2 ss" },
+      { item: "Gulrøtter", amount: "3 stk" }
+    ]
+  },
+  {
+    id: "indisk-daal",
+    name: "Indisk daal",
+    category: "Vegetar",
+    ingredients: [
+      { item: "Røde linser", amount: "300 g" },
+      { item: "Løk", amount: "1 stk" },
+      { item: "Hvitløk", amount: "2 fedd" },
+      { item: "Ingefær", amount: "2 cm" },
+      { item: "Kokosmelk", amount: "1 boks" },
+      { item: "Hakket tomat", amount: "1 boks" },
+      { item: "Spisskummen og gurkemeie", amount: "2 ts hver" },
+      { item: "Ris", amount: "400 g" }
+    ]
+  },
+  {
+    id: "enchiladas",
+    name: "Enchiladas med kylling",
+    category: "TexMex",
+    ingredients: [
+      { item: "Kyllingbryst", amount: "400 g" },
+      { item: "Tortillalefser", amount: "8 stk" },
+      { item: "Hakket tomat", amount: "1 boks" },
+      { item: "Mais", amount: "1 boks" },
+      { item: "Revet ost", amount: "200 g" },
+      { item: "Enchiladasaus", amount: "1 glass" }
+    ]
+  },
+  {
+    id: "cobb-salat",
+    name: "Cobb-salat",
+    category: "Salat",
+    ingredients: [
+      { item: "Kyllingbryst", amount: "400 g" },
+      { item: "Egg", amount: "3 stk" },
+      { item: "Bacon", amount: "150 g" },
+      { item: "Avokado", amount: "1 stk" },
+      { item: "Tomat", amount: "2 stk" },
+      { item: "Romaine/hjertesalat", amount: "2 stk" },
+      { item: "Blåmuggost eller feta", amount: "100 g" }
+    ]
   }
 ];
 
