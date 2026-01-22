@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ukesplanlegger · Middag og handleliste</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="page">
+    <header class="hero">
+      <div class="hero__eyebrow">Progresjon · uke for uke</div>
+      <div class="hero__title">Planhub: middag, handleliste, kvitteringer, dagsplan</div>
+      <p class="hero__lede">Bruk fanene under for å hoppe mellom middagsplan, handleliste og andre områder. Lagret lokalt på enheten.</p>
+    </header>
+
+    <nav class="topbar" aria-label="Plan-moduser">
+      <button class="tab-card is-active" data-tab="middagsplan" type="button">
+        <span class="tab-card__label">Middagsplan</span>
+        <span class="tab-card__hint">Middag mandag–søndag</span>
+      </button>
+      <button class="tab-card" data-tab="handleliste" type="button">
+        <span class="tab-card__label">Handleliste</span>
+        <span class="tab-card__hint">Ingredienser med ett trykk</span>
+      </button>
+      <button class="tab-card" data-tab="kvitteringer" type="button">
+        <span class="tab-card__label">Kvitteringer</span>
+        <span class="tab-card__hint">Plass for opplastinger</span>
+      </button>
+      <button class="tab-card" data-tab="dagsplan" type="button">
+        <span class="tab-card__label">Dagsplan</span>
+        <span class="tab-card__hint">Huskeliste per dag</span>
+      </button>
+    </nav>
+
+    <main class="layout">
+      <section class="panel tab-panel is-active" data-panel="middagsplan">
+        <div class="panel__header">
+          <div class="panel__title">Middager denne uken</div>
+          <div class="panel__hint">Mobilvennlig · lagret lokalt</div>
+        </div>
+        <div id="day-grid" class="day-grid" aria-live="polite"></div>
+      </section>
+
+      <section class="panel tab-panel" data-panel="handleliste">
+        <div class="panel__header">
+          <div class="panel__title">Handleliste</div>
+          <div class="panel__hint">Samle ingredienser med +</div>
+        </div>
+        <div class="shopping-actions">
+          <button id="clear-list" class="button button--ghost" type="button">Tøm handlelisten</button>
+        </div>
+        <ul id="shopping-list" class="shopping-list" aria-live="polite"></ul>
+      </section>
+
+      <section class="panel tab-panel" data-panel="kvitteringer">
+        <div class="panel__header">
+          <div class="panel__title">Kvitteringer</div>
+          <div class="panel__hint">Kommer snart</div>
+        </div>
+        <p class="placeholder">Her kan du senere laste opp kvitteringer eller notere beløp.</p>
+      </section>
+
+      <section class="panel tab-panel" data-panel="dagsplan">
+        <div class="panel__header">
+          <div class="panel__title">Dagsplan</div>
+          <div class="panel__hint">Kommer snart</div>
+        </div>
+        <p class="placeholder">Legg inn daglige gjøremål eller påminnelser når du er klar.</p>
+      </section>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
