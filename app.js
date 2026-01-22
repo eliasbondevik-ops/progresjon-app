@@ -96,7 +96,8 @@ const meals = [
 
 const storageKeys = {
   plan: "progresjon.weeklyPlanner.plan",
-  list: "progresjon.weeklyPlanner.shoppingList"
+  list: "progresjon.weeklyPlanner.shoppingList",
+  reminders: "progresjon.weeklyPlanner.reminders"
 };
 const defaultServings = 4;
 
@@ -105,10 +106,17 @@ const shoppingListEl = document.getElementById("shopping-list");
 const clearListButton = document.getElementById("clear-list");
 const tabButtons = document.querySelectorAll("[data-tab]");
 const tabPanels = document.querySelectorAll("[data-panel]");
+const daySelector = document.getElementById("day-selector");
+const dayMealEl = document.getElementById("day-meal");
+const reminderListEl = document.getElementById("reminder-list");
+const reminderForm = document.getElementById("reminder-form");
+const reminderInput = document.getElementById("reminder-input");
 let activeTab = "middagsplan";
+let activeDayPlan = dayOrder[0].key;
 
 let planState = migratePlanState(loadState(storageKeys.plan, {}));
 let shoppingList = loadState(storageKeys.list, []);
+let remindersState = loadState(storageKeys.reminders, {});
 
 function loadState(key, fallback) {
   try {
@@ -151,6 +159,18 @@ function setActiveTab(name) {
   tabPanels.forEach((panel) => {
     panel.classList.toggle("is-active", panel.dataset.panel === name);
   });
+}
+
+function buildDaySelector() {
+  if (!daySelector) return;
+  daySelector.innerHTML = dayOrder
+    .map(
+      (day) => `
+      <button class="day-chip ${activeDayPlan === day.key ? "is-active" : ""}" data-day-select="${day.key}">
+        ${day.label}
+      </button>`
+    )
+    .join("");
 }
 
 function buildPlanner() {
@@ -263,6 +283,39 @@ function renderShoppingList() {
     .join("");
 }
 
+function renderDayPlan() {
+  if (!dayMealEl || !reminderListEl) return;
+  const dayState = planState[activeDayPlan] || { meal: "", servings: defaultServings };
+  const meal = meals.find((m) => m.id === dayState.meal);
+  if (meal) {
+    dayMealEl.innerHTML = `
+      <div class="day-plan__meal-title">${meal.name}</div>
+      <div class="day-plan__meal-note">${dayState.servings} ${dayState.servings === 1 ? "person" : "personer"} · ${meal.note || "Ingen note"} </div>
+    `;
+  } else {
+    dayMealEl.innerHTML = `<div class="meal-note">Ingen middag valgt for ${labelForDay(activeDayPlan)} enda.</div>`;
+  }
+
+  const list = remindersState[activeDayPlan] || [];
+  if (!list.length) {
+    reminderListEl.innerHTML = `<li class="empty-state">Ingen påminnelser for ${labelForDay(activeDayPlan)}.</li>`;
+    return;
+  }
+
+  reminderListEl.innerHTML = list
+    .map(
+      (item) => `
+      <li class="reminder-item">
+        <div class="reminder-item__text">${item.text}</div>
+        <div class="reminder-actions">
+          <button class="button button--ghost button--icon" data-action="remove-reminder" data-id="${item.id}" aria-label="Fjern påminnelse">−</button>
+        </div>
+      </li>
+    `
+    )
+    .join("");
+}
+
 function updateMeal(dayKey, mealId) {
   const current = planState[dayKey] || { servings: defaultServings };
   planState[dayKey] = { meal: mealId, servings: current.servings || defaultServings };
@@ -270,6 +323,9 @@ function updateMeal(dayKey, mealId) {
   const ingredientsEl = document.querySelector(`[data-ingredients="${dayKey}"]`);
   if (ingredientsEl) {
     ingredientsEl.innerHTML = renderIngredientsContent(mealId, dayKey, planState[dayKey].servings);
+  }
+  if (dayKey === activeDayPlan) {
+    renderDayPlan();
   }
 }
 
@@ -395,6 +451,9 @@ function refreshDayIngredients(dayKey) {
   if (ingredientsEl) {
     ingredientsEl.innerHTML = renderIngredientsContent(dayState.meal, dayKey, dayState.servings);
   }
+  if (dayKey === activeDayPlan) {
+    renderDayPlan();
+  }
 }
 
 function toggleIngredient(dayKey, index) {
@@ -413,6 +472,27 @@ function toggleIngredient(dayKey, index) {
   refreshDayIngredients(dayKey);
 }
 
+function addReminder(text) {
+  const dayList = remindersState[activeDayPlan] || [];
+  const item = {
+    id: `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`,
+    text: text.trim()
+  };
+  remindersState = { ...remindersState, [activeDayPlan]: [...dayList, item] };
+  saveState(storageKeys.reminders, remindersState);
+  renderDayPlan();
+}
+
+function removeReminder(id) {
+  const dayList = remindersState[activeDayPlan] || [];
+  remindersState = {
+    ...remindersState,
+    [activeDayPlan]: dayList.filter((item) => item.id !== id)
+  };
+  saveState(storageKeys.reminders, remindersState);
+  renderDayPlan();
+}
+
 dayGrid.addEventListener("change", (event) => {
   const target = event.target;
   if (target.matches("select[data-day]")) {
@@ -428,6 +508,9 @@ dayGrid.addEventListener("change", (event) => {
     const ingredientsEl = document.querySelector(`[data-ingredients="${dayKey}"]`);
     if (ingredientsEl) {
       ingredientsEl.innerHTML = renderIngredientsContent(current.meal, dayKey, servings);
+    }
+    if (dayKey === activeDayPlan) {
+      renderDayPlan();
     }
   }
 });
@@ -465,6 +548,34 @@ shoppingListEl.addEventListener("click", (event) => {
   removeByKey(key);
 });
 
+daySelector?.addEventListener("click", (event) => {
+  const button = event.target.closest("[data-day-select]");
+  if (!button) return;
+  const dayKey = button.getAttribute("data-day-select");
+  if (!dayKey) return;
+  activeDayPlan = dayKey;
+  buildDaySelector();
+  renderDayPlan();
+});
+
+reminderForm?.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const text = reminderInput?.value?.trim();
+  if (!text) return;
+  addReminder(text);
+  reminderInput.value = "";
+});
+
+reminderListEl?.addEventListener("click", (event) => {
+  const button = event.target.closest("[data-action='remove-reminder']");
+  if (!button) return;
+  const id = button.getAttribute("data-id");
+  if (!id) return;
+  removeReminder(id);
+});
+
 buildPlanner();
 renderShoppingList();
 setActiveTab(activeTab);
+buildDaySelector();
+renderDayPlan();

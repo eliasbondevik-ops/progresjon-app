@@ -67,9 +67,22 @@
       <section class="panel tab-panel" data-panel="dagsplan">
         <div class="panel__header">
           <div class="panel__title">Dagsplan</div>
-          <div class="panel__hint">Kommer snart</div>
+          <div class="panel__hint">Påminnelser + dagens middag</div>
         </div>
-        <p class="placeholder">Legg inn daglige gjøremål eller påminnelser når du er klar.</p>
+        <div id="day-selector" class="day-selector" aria-label="Velg dag"></div>
+        <div class="day-plan">
+          <div class="day-plan__summary">
+            <div class="day-plan__meal" id="day-meal"></div>
+          </div>
+          <form id="reminder-form" class="reminder-form">
+            <label class="input-label" for="reminder-input">Ny påminnelse</label>
+            <div class="reminder-input-row">
+              <input id="reminder-input" name="reminder" class="input" type="text" placeholder="Skriv en påminnelse" required>
+              <button class="button" type="submit">Legg til</button>
+            </div>
+          </form>
+          <ul id="reminder-list" class="reminder-list"></ul>
+        </div>
       </section>
     </main>
   </div>

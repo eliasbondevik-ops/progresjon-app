@@ -206,6 +206,22 @@ body {
   color: var(--muted);
 }
 
+.input {
+  width: 100%;
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--stroke);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text);
+  font-size: 15px;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px rgba(125, 226, 255, 0.2);
+}
+
 .input-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -345,6 +361,103 @@ body {
 
 .add-all {
   align-self: flex-start;
+}
+
+.day-selector {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+
+.day-chip {
+  border: 1px solid var(--stroke);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text);
+  border-radius: 999px;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: border-color 140ms ease, box-shadow 140ms ease;
+}
+
+.day-chip.is-active {
+  border-color: var(--accent);
+  box-shadow: 0 8px 24px rgba(125, 226, 255, 0.25);
+}
+
+.day-plan {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.day-plan__summary {
+  border: 1px dashed var(--stroke);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.day-plan__meal-title {
+  font-weight: 700;
+}
+
+.day-plan__meal-note {
+  color: var(--muted);
+  margin-top: 6px;
+}
+
+.reminder-form {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.reminder-input-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.reminder-input-row .button {
+  white-space: nowrap;
+}
+
+.reminder-list {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.reminder-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.reminder-item__text {
+  flex: 1;
+  word-break: break-word;
+}
+
+.reminder-item__meta {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.reminder-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .shopping-actions {
