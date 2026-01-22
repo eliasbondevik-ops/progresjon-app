@@ -1086,14 +1086,11 @@ function buildPlanner() {
         </div>
         <div class="input-row">
           <label class="input-label" for="servings-${day.key}">Antall personer</label>
-          <select class="select" id="servings-${day.key}" data-day-servings="${day.key}">
-            ${[1, 2, 3, 4, 5, 6]
-              .map(
-                (n) =>
-                  `<option value="${n}" ${n === (dayState.servings || defaultServings) ? "selected" : ""}>${n} pers</option>`
-              )
-              .join("")}
-          </select>
+          <div class="servings-counter" data-servings="${day.key}">
+            <button class="button button--ghost button--icon" type="button" data-action="servings-dec" data-day="${day.key}" aria-label="Færre personer">−</button>
+            <div class="servings-value" aria-live="polite">${dayState.servings || defaultServings}</div>
+            <button class="button button--ghost button--icon" type="button" data-action="servings-inc" data-day="${day.key}" aria-label="Flere personer">+</button>
+          </div>
         </div>
       </div>
       <div class="ingredients" data-ingredients="${day.key}">${renderIngredientsContent(
@@ -1572,20 +1569,6 @@ dayGrid.addEventListener("change", (event) => {
     const dayKey = target.getAttribute("data-day");
     updateMeal(dayKey, target.value);
   }
-  if (target.matches("select[data-day-servings]")) {
-    const dayKey = target.getAttribute("data-day-servings");
-    const servings = Number(target.value) || defaultServings;
-    const current = planState[dayKey] || { meal: "", servings: defaultServings };
-    planState[dayKey] = { meal: current.meal, servings };
-    saveState(storageKeys.plan, planState);
-    const ingredientsEl = document.querySelector(`[data-ingredients="${dayKey}"]`);
-    if (ingredientsEl) {
-      ingredientsEl.innerHTML = renderIngredientsContent(current.meal, dayKey, servings);
-    }
-    if (dayKey === activeDayPlan) {
-      renderDayPlan();
-    }
-  }
 });
 
 dayGrid.addEventListener("click", (event) => {
@@ -1622,6 +1605,9 @@ dayGrid.addEventListener("click", (event) => {
     const mealId = target.getAttribute("data-meal");
     planRestSuggestion(fromDay, toDay, mealId);
   }
+  if (target.dataset.action === "servings-inc" || target.dataset.action === "servings-dec") {
+    return; // handled in separate click listener below
+  }
 });
 
 document.body.addEventListener("click", (event) => {
@@ -1656,6 +1642,28 @@ dayGrid.addEventListener("input", (event) => {
   const resultsEl = document.querySelector(`[data-results="${dayKey}"]`);
   if (resultsEl) {
     resultsEl.innerHTML = renderMealResults(value, dayState.meal, dayKey, mealCategoryFilters[dayKey] || "");
+  }
+});
+
+dayGrid.addEventListener("click", (event) => {
+  const target = event.target;
+  if (target.dataset.action === "servings-inc" || target.dataset.action === "servings-dec") {
+    const dayKey = target.getAttribute("data-day");
+    const current = planState[dayKey] || { meal: "", servings: defaultServings };
+    let next = current.servings || defaultServings;
+    if (target.dataset.action === "servings-inc") next = Math.min(12, next + 1);
+    if (target.dataset.action === "servings-dec") next = Math.max(1, next - 1);
+    planState[dayKey] = { meal: current.meal, servings: next, restSource: current.restSource || null };
+    saveState(storageKeys.plan, planState);
+    const valEl = document.querySelector(`.servings-counter[data-servings="${dayKey}"] .servings-value`);
+    if (valEl) valEl.textContent = next;
+    const ingredientsEl = document.querySelector(`[data-ingredients="${dayKey}"]`);
+    if (ingredientsEl) {
+      ingredientsEl.innerHTML = renderIngredientsContent(current.meal, dayKey, next);
+    }
+    if (dayKey === activeDayPlan) {
+      renderDayPlan();
+    }
   }
 });
 
