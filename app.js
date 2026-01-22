@@ -98,6 +98,7 @@ const storageKeys = {
   plan: "progresjon.weeklyPlanner.plan",
   list: "progresjon.weeklyPlanner.shoppingList"
 };
+const defaultServings = 4;
 
 const dayGrid = document.getElementById("day-grid");
 const shoppingListEl = document.getElementById("shopping-list");
@@ -106,7 +107,7 @@ const tabButtons = document.querySelectorAll("[data-tab]");
 const tabPanels = document.querySelectorAll("[data-panel]");
 let activeTab = "middagsplan";
 
-let planState = loadState(storageKeys.plan, {});
+let planState = migratePlanState(loadState(storageKeys.plan, {}));
 let shoppingList = loadState(storageKeys.list, []);
 
 function loadState(key, fallback) {
@@ -127,6 +128,21 @@ function saveState(key, value) {
   }
 }
 
+function migratePlanState(state) {
+  const migrated = {};
+  Object.entries(state || {}).forEach(([dayKey, value]) => {
+    if (typeof value === "string") {
+      migrated[dayKey] = { meal: value, servings: defaultServings };
+    } else if (value && typeof value === "object") {
+      migrated[dayKey] = {
+        meal: value.meal || "",
+        servings: value.servings || defaultServings
+      };
+    }
+  });
+  return migrated;
+}
+
 function setActiveTab(name) {
   activeTab = name;
   tabButtons.forEach((button) => {
@@ -144,28 +160,43 @@ function buildPlanner() {
     card.className = "day-card";
     card.dataset.day = day.key;
 
-    const selected = planState[day.key] || "";
+    const dayState = planState[day.key] || { meal: "", servings: defaultServings };
+    const selected = dayState.meal || "";
 
     card.innerHTML = `
       <div class="day-card__header">
         <span class="day-card__dot"></span>
         <div class="day-card__title">${day.label}</div>
       </div>
-      <div class="input-row">
-        <label class="input-label" for="select-${day.key}">Velg middag</label>
-        <select class="select" id="select-${day.key}" data-day="${day.key}">
-          <option value="">- Ingen valgt -</option>
-          ${meals
-            .map(
-              (meal) =>
-                `<option value="${meal.id}" ${meal.id === selected ? "selected" : ""}>${meal.name}</option>`
-            )
-            .join("")}
-        </select>
+      <div class="input-grid">
+        <div class="input-row">
+          <label class="input-label" for="select-${day.key}">Velg middag</label>
+          <select class="select" id="select-${day.key}" data-day="${day.key}">
+            <option value="">- Ingen valgt -</option>
+            ${meals
+              .map(
+                (meal) =>
+                  `<option value="${meal.id}" ${meal.id === selected ? "selected" : ""}>${meal.name}</option>`
+              )
+              .join("")}
+          </select>
+        </div>
+        <div class="input-row">
+          <label class="input-label" for="servings-${day.key}">Antall personer</label>
+          <select class="select" id="servings-${day.key}" data-day-servings="${day.key}">
+            ${[1, 2, 3, 4, 5, 6]
+              .map(
+                (n) =>
+                  `<option value="${n}" ${n === (dayState.servings || defaultServings) ? "selected" : ""}>${n} pers</option>`
+              )
+              .join("")}
+          </select>
+        </div>
       </div>
       <div class="ingredients" data-ingredients="${day.key}">${renderIngredientsContent(
         selected,
-        day.key
+        day.key,
+        dayState.servings
       )}</div>
     `;
 
@@ -173,7 +204,7 @@ function buildPlanner() {
   });
 }
 
-function renderIngredientsContent(mealId, dayKey) {
+function renderIngredientsContent(mealId, dayKey, servings = defaultServings) {
   if (!mealId) {
     return `<div class="meal-note">Velg en middag for å se ingrediensene.</div>`;
   }
@@ -189,7 +220,7 @@ function renderIngredientsContent(mealId, dayKey) {
       <li class="ingredient">
         <div class="ingredient__text">
           <span class="ingredient__name">${ingredient.item}</span>
-          <span class="ingredient__amount">${ingredient.amount || ""}</span>
+          <span class="ingredient__amount">${formatAmount(ingredient.amount, servings)}</span>
         </div>
         <button class="button pill-button" data-action="add-ingredient" data-day="${dayKey}" data-index="${idx}" aria-label="Legg til ${ingredient.item} i handlelisten">+</button>
       </li>
@@ -200,6 +231,7 @@ function renderIngredientsContent(mealId, dayKey) {
   return `
     <div class="meal-name">${meal.name}</div>
     ${meal.note ? `<p class="meal-note">${meal.note}</p>` : ""}
+    <p class="meal-note">Mengder tilpasset for ${servings} ${servings === 1 ? "person" : "personer"}.</p>
     <ul class="ingredient-list">${list}</ul>
     <button class="button add-all" data-action="add-all" data-day="${dayKey}" type="button">Legg alle i handlelisten</button>
   `;
@@ -227,30 +259,35 @@ function renderShoppingList() {
 }
 
 function updateMeal(dayKey, mealId) {
-  planState[dayKey] = mealId;
+  const current = planState[dayKey] || { servings: defaultServings };
+  planState[dayKey] = { meal: mealId, servings: current.servings || defaultServings };
   saveState(storageKeys.plan, planState);
   const ingredientsEl = document.querySelector(`[data-ingredients="${dayKey}"]`);
   if (ingredientsEl) {
-    ingredientsEl.innerHTML = renderIngredientsContent(mealId, dayKey);
+    ingredientsEl.innerHTML = renderIngredientsContent(mealId, dayKey, planState[dayKey].servings);
   }
 }
 
 function addIngredient(dayKey, index) {
-  const mealId = planState[dayKey];
+  const dayState = planState[dayKey] || { meal: "", servings: defaultServings };
+  const mealId = dayState.meal;
   if (!mealId) return;
 
   const meal = meals.find((m) => m.id === mealId);
   if (!meal || !meal.ingredients[index]) return;
 
-  const ingredient = meal.ingredients[index];
+  const ingredient = withServings(meal.ingredients[index], dayState.servings);
   addToShoppingList(ingredient, meal.name, dayKey);
 }
 
 function addAllIngredients(dayKey) {
-  const mealId = planState[dayKey];
+  const dayState = planState[dayKey] || { meal: "", servings: defaultServings };
+  const mealId = dayState.meal;
   const meal = meals.find((m) => m.id === mealId);
   if (!meal) return;
-  meal.ingredients.forEach((ingredient) => addToShoppingList(ingredient, meal.name, dayKey));
+  meal.ingredients.forEach((ingredient) =>
+    addToShoppingList(withServings(ingredient, dayState.servings), meal.name, dayKey)
+  );
 }
 
 function addToShoppingList(ingredient, mealName, dayKey) {
@@ -282,6 +319,28 @@ function labelForDay(key) {
   return found ? found.label : key;
 }
 
+function withServings(ingredient, servings) {
+  return {
+    ...ingredient,
+    amount: formatAmount(ingredient.amount, servings)
+  };
+}
+
+function formatAmount(amount, servings) {
+  if (!amount) return "";
+  const factor = servings / defaultServings;
+  if (factor === 1) return amount;
+  const numberRegex = /(\d+(?:[.,]\d+)?)/g;
+  return amount.replace(numberRegex, (match) => {
+    const normalized = match.replace(",", ".");
+    const numeric = parseFloat(normalized);
+    if (Number.isNaN(numeric)) return match;
+    const scaled = numeric * factor;
+    const formatted = Number.isInteger(scaled) ? String(scaled) : scaled.toFixed(1).replace(/\.0$/, "");
+    return formatted;
+  });
+}
+
 function clearShoppingList() {
   shoppingList = [];
   saveState(storageKeys.list, shoppingList);
@@ -293,6 +352,17 @@ dayGrid.addEventListener("change", (event) => {
   if (target.matches("select[data-day]")) {
     const dayKey = target.getAttribute("data-day");
     updateMeal(dayKey, target.value);
+  }
+  if (target.matches("select[data-day-servings]")) {
+    const dayKey = target.getAttribute("data-day-servings");
+    const servings = Number(target.value) || defaultServings;
+    const current = planState[dayKey] || { meal: "", servings: defaultServings };
+    planState[dayKey] = { meal: current.meal, servings };
+    saveState(storageKeys.plan, planState);
+    const ingredientsEl = document.querySelector(`[data-ingredients="${dayKey}"]`);
+    if (ingredientsEl) {
+      ingredientsEl.innerHTML = renderIngredientsContent(current.meal, dayKey, servings);
+    }
   }
 });
 
