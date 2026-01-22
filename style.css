@@ -269,17 +269,23 @@ body {
   color: var(--text);
   border-radius: var(--radius-sm);
   padding: 8px 10px;
-  cursor: pointer;
   display: flex;
-  flex-direction: column;
-  gap: 4px;
-  min-width: 160px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 180px;
   transition: border-color 120ms ease, box-shadow 120ms ease;
 }
 
 .rest-tip:hover {
   border-color: var(--accent);
   box-shadow: 0 8px 22px rgba(125, 226, 255, 0.2);
+}
+
+.rest-tip__text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .rest-tip__name {

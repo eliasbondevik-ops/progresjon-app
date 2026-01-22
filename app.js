@@ -576,10 +576,13 @@ function renderRestTips(meal, dayKey) {
         ${suggestions
           .map(
             (sugg) => `
-              <button class="rest-tip" data-action="plan-rest" data-day="${dayKey}" data-next="${nextDay}" data-meal="${sugg.id}">
-                <span class="rest-tip__name">${sugg.name}</span>
-                <span class="rest-tip__tag">${sugg.category || "Uten kategori"}</span>
-              </button>
+              <div class="rest-tip">
+                <div class="rest-tip__text">
+                  <span class="rest-tip__name">${sugg.name}</span>
+                  <span class="rest-tip__tag">${sugg.category || "Uten kategori"}</span>
+                </div>
+                <button class="button pill-button" data-action="plan-rest" data-day="${dayKey}" data-next="${nextDay}" data-meal="${sugg.id}" aria-label="Planlegg ${sugg.name} til ${labelForDay(nextDay)}">+</button>
+              </div>
             `
           )
           .join("")}
