@@ -532,6 +532,66 @@ body {
   color: var(--muted);
 }
 
+.steps__actions {
+  margin-top: 8px;
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.overlay.is-open {
+  display: flex;
+}
+
+.overlay__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(6px);
+}
+
+.overlay__dialog {
+  position: relative;
+  background: var(--panel);
+  border: 1px solid var(--stroke);
+  border-radius: 16px;
+  padding: 16px;
+  width: min(90vw, 540px);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+  z-index: 1;
+}
+
+.overlay__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.overlay__title {
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.overlay__subtitle {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.overlay__body ol {
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
 .reminder-form {
   margin-top: 8px;
   display: flex;

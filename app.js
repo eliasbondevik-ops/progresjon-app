@@ -721,6 +721,10 @@ const dayMealEl = document.getElementById("day-meal");
 const reminderListEl = document.getElementById("reminder-list");
 const reminderForm = document.getElementById("reminder-form");
 const reminderInput = document.getElementById("reminder-input");
+const stepsOverlay = document.getElementById("steps-overlay");
+const stepsTitleEl = document.getElementById("steps-title");
+const stepsSubtitleEl = document.getElementById("steps-subtitle");
+const stepsBodyEl = document.getElementById("steps-body");
 let activeTab = "middagsplan";
 let activeDayPlan = dayOrder[0].key;
 
@@ -1135,11 +1139,14 @@ function renderCategoryOptions(selected) {
 
 function renderSteps(steps) {
   return `
-    <div class="steps">
+    <div class="steps" data-action="view-steps">
       <div class="steps__title">Fremgangsmåte</div>
       <ol class="steps__list">
         ${steps.map((step) => `<li>${step}</li>`).join("")}
       </ol>
+      <div class="steps__actions">
+        <button class="button button--ghost button--icon" type="button" data-action="view-steps">→</button>
+      </div>
     </div>
   `;
 }
@@ -1269,6 +1276,29 @@ function planRestSuggestion(fromDay, toDay, mealId) {
   buildPlanner();
 }
 
+function openStepsOverlay(dayKey) {
+  if (!stepsOverlay || !stepsTitleEl || !stepsBodyEl) return;
+  const dayState = planState[dayKey] || { meal: "", servings: defaultServings };
+  const meal = meals.find((m) => m.id === dayState.meal);
+  if (!meal) return;
+  const steps = mealSteps[meal.id] || [];
+  stepsTitleEl.textContent = meal.name;
+  stepsSubtitleEl.textContent = `${dayState.servings} ${dayState.servings === 1 ? "person" : "personer"} · ${meal.category || "Uten kategori"}`;
+  stepsBodyEl.innerHTML = `
+    <ol>
+      ${steps.map((step) => `<li>${step}</li>`).join("")}
+    </ol>
+  `;
+  stepsOverlay.hidden = false;
+  stepsOverlay.classList.add("is-open");
+}
+
+function closeStepsOverlay() {
+  if (!stepsOverlay) return;
+  stepsOverlay.classList.remove("is-open");
+  stepsOverlay.hidden = true;
+}
+
 function removeReminder(id) {
   const dayList = remindersState[activeDayPlan] || [];
   remindersState = {
@@ -1334,6 +1364,24 @@ dayGrid.addEventListener("click", (event) => {
     const toDay = target.getAttribute("data-next");
     const mealId = target.getAttribute("data-meal");
     planRestSuggestion(fromDay, toDay, mealId);
+  }
+});
+
+document.body.addEventListener("click", (event) => {
+  const stepsTrigger = event.target.closest("[data-action='view-steps']");
+  if (stepsTrigger) {
+    openStepsOverlay(activeDayPlan);
+  }
+
+  const closeTrigger = event.target.closest("[data-action='close-steps']");
+  if (closeTrigger) {
+    closeStepsOverlay();
+  }
+});
+
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") {
+    closeStepsOverlay();
   }
 });
 
