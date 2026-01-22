@@ -952,7 +952,8 @@ const mealStepsDetailed = {
 const storageKeys = {
   plan: "progresjon.weeklyPlanner.plan",
   list: "progresjon.weeklyPlanner.shoppingList",
-  reminders: "progresjon.weeklyPlanner.reminders"
+  reminders: "progresjon.weeklyPlanner.reminders",
+  budget: "progresjon.weeklyPlanner.budget"
 };
 const defaultServings = 4;
 
@@ -982,6 +983,19 @@ const stepsOverlay = document.getElementById("steps-overlay");
 const stepsTitleEl = document.getElementById("steps-title");
 const stepsSubtitleEl = document.getElementById("steps-subtitle");
 const stepsBodyEl = document.getElementById("steps-body");
+const budgetMonthLabel = document.getElementById("budget-month-label");
+const budgetUsedEl = document.getElementById("budget-used");
+const budgetGoalLabelEl = document.getElementById("budget-goal-label");
+const donutValue = document.getElementById("donut-value");
+const budgetSummaryEl = document.getElementById("budget-summary");
+const budgetCategoriesEl = document.getElementById("budget-categories");
+const budgetExpensesEl = document.getElementById("budget-expenses");
+const budgetSetGoalBtn = document.getElementById("budget-set-goal");
+const expenseForm = document.getElementById("expense-form");
+const expenseAmount = document.getElementById("expense-amount");
+const expenseDate = document.getElementById("expense-date");
+const expenseCategory = document.getElementById("expense-category");
+const expenseNote = document.getElementById("expense-note");
 let activeTab = "middagsplan";
 let activeDayPlan = dayOrder[0].key;
 
@@ -990,6 +1004,11 @@ let shoppingList = loadState(storageKeys.list, []);
 let remindersState = loadState(storageKeys.reminders, {});
 const mealFilters = {};
 const mealCategoryFilters = {};
+let budgetState = loadState(storageKeys.budget, {
+  month: currentMonthKey(),
+  goal: 4000,
+  expenses: []
+});
 
 function loadState(key, fallback) {
   try {
@@ -1025,6 +1044,17 @@ function migratePlanState(state) {
   return migrated;
 }
 
+function migrateBudgetState(state) {
+  if (!state || !state.month) {
+    return {
+      month: currentMonthKey(),
+      goal: 4000,
+      expenses: []
+    };
+  }
+  return state;
+}
+
 function setActiveTab(name) {
   activeTab = name;
   tabButtons.forEach((button) => {
@@ -1033,6 +1063,10 @@ function setActiveTab(name) {
   tabPanels.forEach((panel) => {
     panel.classList.toggle("is-active", panel.dataset.panel === name);
   });
+
+  if (name === "kvitteringer") {
+    renderBudget();
+  }
 }
 
 function buildDaySelector() {
@@ -1374,6 +1408,89 @@ function togglePurchased(key) {
   renderShoppingList();
 }
 
+function addExpense({ amount, date, category, note }) {
+  const currentMonth = currentMonthKey();
+  if (budgetState.month !== currentMonth) {
+    budgetState = migrateBudgetState({ month: currentMonth, goal: budgetState.goal, expenses: [] });
+  }
+  budgetState.expenses.unshift({
+    id: `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`,
+    amount,
+    date,
+    category,
+    note
+  });
+  saveState(storageKeys.budget, budgetState);
+  renderBudget();
+}
+
+function renderBudget() {
+  if (!budgetMonthLabel) return;
+  const currentMonth = currentMonthKey();
+  if (budgetState.month !== currentMonth) {
+    budgetState = migrateBudgetState({ month: currentMonth, goal: budgetState.goal, expenses: [] });
+  }
+
+  const used = budgetState.expenses.reduce((sum, e) => sum + Number(e.amount || 0), 0);
+  const goal = Number(budgetState.goal || 0);
+  budgetMonthLabel.textContent = currentMonth;
+  budgetUsedEl.textContent = `${Math.round(used)} kr`;
+  budgetGoalLabelEl.textContent = goal ? `av ${Math.round(goal)} kr` : "Ingen mål satt";
+
+  const percent = goal ? Math.min(1, used / goal) : 0;
+  const circumference = 2 * Math.PI * 54;
+  const offset = circumference * (1 - percent);
+  if (donutValue) {
+    donutValue.style.strokeDasharray = `${circumference}`;
+    donutValue.style.strokeDashoffset = `${offset}`;
+  }
+
+  budgetSummaryEl.innerHTML = `
+    <div>Brukt: ${used.toFixed(0)} kr</div>
+    <div>Gjenstår: ${goal ? Math.max(0, goal - used).toFixed(0) : "–"} kr</div>
+  `;
+
+  const byCat = budgetState.expenses.reduce((acc, e) => {
+    const key = e.category || "Annet";
+    acc[key] = (acc[key] || 0) + Number(e.amount || 0);
+    return acc;
+  }, {});
+  const catEntries = Object.entries(byCat);
+  budgetCategoriesEl.innerHTML = catEntries.length
+    ? catEntries
+        .map(
+          ([cat, val]) => `
+          <div class="category-chip">
+            <div class="category-chip__name"><span class="category-dot"></span>${cat}</div>
+            <div class="category-chip__amount">${val.toFixed(0)} kr</div>
+          </div>
+        `
+        )
+        .join("")
+    : `<div class="empty-state">Ingen utgifter registrert ennå.</div>`;
+
+  budgetExpensesEl.innerHTML = budgetState.expenses.length
+    ? budgetState.expenses
+        .map(
+          (e) => `
+        <li class="expense-item">
+          <div>
+            <div class="expense-item__amount">${Number(e.amount).toFixed(0)} kr</div>
+            <div class="expense-item__meta">${e.category || "Annet"} · ${e.note || "Ingen notat"}</div>
+          </div>
+          <div class="expense-item__meta">${e.date}</div>
+        </li>
+      `
+        )
+        .join("")
+    : `<li class="empty-state">Ingen transaksjoner denne måneden.</li>`;
+}
+
+function currentMonthKey() {
+  const now = new Date();
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+}
+
 function filterMeals(query, category) {
   return meals.filter((meal) => {
     const matchesName = meal.name.toLowerCase().includes(query);
@@ -1628,6 +1745,29 @@ document.addEventListener("keydown", (event) => {
   }
 });
 
+budgetSetGoalBtn?.addEventListener("click", () => {
+  const current = budgetState.goal || 0;
+  const input = prompt("Sett månedsbudsjett (kr):", String(current));
+  if (input === null) return;
+  const value = Number(input);
+  if (Number.isNaN(value) || value <= 0) return;
+  budgetState.goal = value;
+  saveState(storageKeys.budget, budgetState);
+  renderBudget();
+});
+
+expenseForm?.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const amount = Number(expenseAmount.value);
+  if (Number.isNaN(amount) || amount <= 0) return;
+  const date = expenseDate.value || new Date().toISOString().slice(0, 10);
+  const category = expenseCategory.value || "Annet";
+  const note = expenseNote.value || "";
+  addExpense({ amount, date, category, note });
+  expenseForm.reset();
+  expenseDate.value = date;
+});
+
 dayGrid.addEventListener("input", (event) => {
   const target = event.target;
   if (!target.matches("input[data-day-filter]")) return;
@@ -1743,3 +1883,4 @@ renderShoppingList();
 setActiveTab(activeTab);
 buildDaySelector();
 renderDayPlan();
+renderBudget();

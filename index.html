@@ -58,10 +58,84 @@
 
       <section class="panel tab-panel" data-panel="kvitteringer">
         <div class="panel__header">
-          <div class="panel__title">Kvitteringer</div>
-          <div class="panel__hint">Kommer snart</div>
+          <div class="panel__title">Matbudsjett</div>
+          <div class="panel__hint">Følg forbruket per måned</div>
         </div>
-        <p class="placeholder">Her kan du senere laste opp kvitteringer eller notere beløp.</p>
+        <div class="budget-grid">
+          <div class="budget-card">
+            <div class="budget-card__header">
+              <div>
+                <div class="budget-card__title">Månedsbudsjett</div>
+                <div class="budget-card__subtitle" id="budget-month-label"></div>
+              </div>
+              <button class="button button--ghost button--icon" id="budget-set-goal" type="button">✎</button>
+            </div>
+            <div class="budget-progress">
+              <div class="donut" id="budget-donut">
+                <svg viewBox="0 0 120 120">
+                  <circle cx="60" cy="60" r="54" class="donut__track"></circle>
+                  <circle cx="60" cy="60" r="54" class="donut__value" id="donut-value"></circle>
+                </svg>
+                <div class="donut__center">
+                  <div id="budget-used" class="donut__number"></div>
+                  <div id="budget-goal-label" class="donut__label"></div>
+                </div>
+              </div>
+              <div id="budget-summary" class="budget-summary"></div>
+            </div>
+          </div>
+
+          <div class="budget-card">
+            <div class="budget-card__header">
+              <div class="budget-card__title">Legg til utgift</div>
+              <div class="budget-card__subtitle">Manuelt inntil kvitteringsleser kommer</div>
+            </div>
+            <form id="expense-form" class="expense-form">
+              <div class="input-grid expense-grid">
+                <div class="input-row">
+                  <label class="input-label" for="expense-amount">Beløp (kr)</label>
+                  <input class="input" id="expense-amount" name="amount" type="number" step="0.01" min="0" required>
+                </div>
+                <div class="input-row">
+                  <label class="input-label" for="expense-date">Dato</label>
+                  <input class="input" id="expense-date" name="date" type="date" required>
+                </div>
+                <div class="input-row">
+                  <label class="input-label" for="expense-category">Kategori</label>
+                  <select class="select" id="expense-category" name="category">
+                    <option value="Annet">Annet</option>
+                    <option value="Kjøtt/Fisk">Kjøtt/Fisk</option>
+                    <option value="Grønnsaker/Frukt">Grønnsaker/Frukt</option>
+                    <option value="Meieri/Egg">Meieri/Egg</option>
+                    <option value="Tørrvarer">Tørrvarer</option>
+                    <option value="Drikke">Drikke</option>
+                    <option value="Snacks">Snacks</option>
+                  </select>
+                </div>
+                <div class="input-row">
+                  <label class="input-label" for="expense-note">Notat</label>
+                  <input class="input" id="expense-note" name="note" type="text" placeholder="Butikk / kvittering">
+                </div>
+              </div>
+              <button class="button" type="submit">Legg til utgift</button>
+            </form>
+          </div>
+
+          <div class="budget-card">
+            <div class="budget-card__header">
+              <div class="budget-card__title">Forbruk per kategori</div>
+            </div>
+            <div id="budget-categories" class="budget-categories"></div>
+          </div>
+
+          <div class="budget-card">
+            <div class="budget-card__header">
+              <div class="budget-card__title">Transaksjoner</div>
+              <div class="budget-card__subtitle">Nyeste først</div>
+            </div>
+            <ul id="budget-expenses" class="budget-expenses"></ul>
+          </div>
+        </div>
       </section>
 
       <section class="panel tab-panel" data-panel="dagsplan">
