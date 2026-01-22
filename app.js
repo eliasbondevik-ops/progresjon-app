@@ -419,9 +419,12 @@ function buildPlanner() {
         <div class="input-row">
           <label class="input-label" for="select-${day.key}">Velg middag</label>
           <input class="input" type="text" placeholder="Søk etter rett" value="${filterValue}" data-day-filter="${day.key}" aria-label="Søk etter rett for ${day.label}">
-          <select class="select" id="select-${day.key}" data-day="${day.key}">
-            ${renderMealOptions(filterValue, selected)}
-          </select>
+          <div class="input-with-action">
+            <select class="select" id="select-${day.key}" data-day="${day.key}">
+              ${renderMealOptions(filterValue, selected)}
+            </select>
+            <button class="button button--ghost button--icon" data-action="clear-meal" data-day="${day.key}" aria-label="Fjern valgt rett">−</button>
+          </div>
           <div class="meal-results" data-results="${day.key}">
             ${renderMealResults(filterValue, selected, day.key)}
           </div>
@@ -709,6 +712,21 @@ function clearShoppingList() {
   renderShoppingList();
 }
 
+function clearMeal(dayKey) {
+  const current = planState[dayKey] || { servings: defaultServings };
+  planState[dayKey] = { meal: "", servings: current.servings || defaultServings };
+  saveState(storageKeys.plan, planState);
+  const select = document.querySelector(`select[data-day="${dayKey}"]`);
+  if (select) {
+    select.value = "";
+  }
+  const resultsEl = document.querySelector(`[data-results="${dayKey}"]`);
+  if (resultsEl) {
+    resultsEl.innerHTML = renderMealResults(mealFilters[dayKey] || "", "", dayKey);
+  }
+  refreshDayIngredients(dayKey);
+}
+
 function refreshDayIngredients(dayKey) {
   const dayState = planState[dayKey] || { meal: "", servings: defaultServings };
   const ingredientsEl = document.querySelector(`[data-ingredients="${dayKey}"]`);
@@ -800,6 +818,11 @@ dayGrid.addEventListener("click", (event) => {
       select.value = mealId;
     }
     updateMeal(dayKey, mealId);
+  }
+
+  if (target.dataset.action === "clear-meal") {
+    const dayKey = target.getAttribute("data-day");
+    clearMeal(dayKey);
   }
 });
 
