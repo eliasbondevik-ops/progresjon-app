@@ -422,6 +422,9 @@ function buildPlanner() {
           <select class="select" id="select-${day.key}" data-day="${day.key}">
             ${renderMealOptions(filterValue, selected)}
           </select>
+          <div class="meal-results" data-results="${day.key}">
+            ${renderMealResults(filterValue, selected, day.key)}
+          </div>
         </div>
         <div class="input-row">
           <label class="input-label" for="servings-${day.key}">Antall personer</label>
@@ -522,6 +525,26 @@ function renderMealOptions(filterValue, selected) {
     )
     .join("");
   return `<option value="">- Ingen valgt -</option>${options}`;
+}
+
+function renderMealResults(filterValue, selected, dayKey) {
+  const query = (filterValue || "").trim().toLowerCase();
+  if (!query) {
+    return `<div class="meal-note">Skriv for å søke i rettene.</div>`;
+  }
+  const filtered = meals.filter((meal) => meal.name.toLowerCase().includes(query));
+  if (!filtered.length) {
+    return `<div class="meal-note">Ingen treff på "${filterValue}".</div>`;
+  }
+  return filtered
+    .slice(0, 8)
+    .map(
+      (meal) => `
+      <button class="meal-result ${meal.id === selected ? "is-active" : ""}" data-action="choose-meal" data-day="${dayKey}" data-meal="${meal.id}">
+        ${meal.name}
+      </button>`
+    )
+    .join("");
 }
 
 function renderDayPlan() {
@@ -768,6 +791,16 @@ dayGrid.addEventListener("click", (event) => {
     const dayKey = target.getAttribute("data-day");
     addAllIngredients(dayKey);
   }
+
+  if (target.dataset.action === "choose-meal") {
+    const dayKey = target.getAttribute("data-day");
+    const mealId = target.getAttribute("data-meal");
+    const select = document.querySelector(`select[data-day="${dayKey}"]`);
+    if (select) {
+      select.value = mealId;
+    }
+    updateMeal(dayKey, mealId);
+  }
 });
 
 dayGrid.addEventListener("input", (event) => {
@@ -780,6 +813,10 @@ dayGrid.addEventListener("input", (event) => {
   const dayState = planState[dayKey] || { meal: "", servings: defaultServings };
   if (select) {
     select.innerHTML = renderMealOptions(value, dayState.meal);
+  }
+  const resultsEl = document.querySelector(`[data-results="${dayKey}"]`);
+  if (resultsEl) {
+    resultsEl.innerHTML = renderMealResults(value, dayState.meal, dayKey);
   }
 });
 

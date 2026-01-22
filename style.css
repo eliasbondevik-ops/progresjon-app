@@ -222,6 +222,34 @@ body {
   box-shadow: 0 0 0 4px rgba(125, 226, 255, 0.2);
 }
 
+.meal-results {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.meal-result {
+  border: 1px solid var(--stroke);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text);
+  border-radius: var(--radius-sm);
+  padding: 8px 10px;
+  cursor: pointer;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+
+.meal-result:hover {
+  border-color: var(--accent);
+  box-shadow: 0 6px 18px rgba(125, 226, 255, 0.2);
+}
+
+.meal-result.is-active {
+  border-color: var(--accent-strong);
+  color: var(--accent-strong);
+  box-shadow: 0 6px 18px rgba(255, 180, 122, 0.2);
+}
+
 .input-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
