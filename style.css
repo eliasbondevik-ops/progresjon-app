@@ -146,9 +146,20 @@ body {
 }
 
 .day-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  display: flex;
   gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+  scroll-snap-type: x mandatory;
+}
+
+.day-grid::-webkit-scrollbar {
+  height: 8px;
+}
+
+.day-grid::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
 }
 
 .day-card {
@@ -160,6 +171,9 @@ body {
   flex-direction: column;
   gap: 10px;
   box-shadow: 0 14px 36px rgba(0, 0, 0, 0.28);
+  min-width: 280px;
+  flex: 0 0 280px;
+  scroll-snap-align: start;
 }
 
 .day-card__header {
