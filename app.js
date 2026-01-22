@@ -975,6 +975,7 @@ const clearListButton = document.getElementById("clear-list");
 const tabButtons = document.querySelectorAll("[data-tab]");
 const tabPanels = document.querySelectorAll("[data-panel]");
 const daySelector = document.getElementById("day-selector");
+const mealDaySelector = document.getElementById("meal-day-selector");
 const dayMealEl = document.getElementById("day-meal");
 const reminderListEl = document.getElementById("reminder-list");
 const reminderForm = document.getElementById("reminder-form");
@@ -1006,6 +1007,7 @@ const receiptNote = document.getElementById("receipt-note");
 const receiptStatus = document.getElementById("receipt-status");
 let activeTab = "middagsplan";
 let activeDayPlan = dayOrder[0].key;
+let activeMealDay = dayOrder[0].key;
 
 let planState = migratePlanState(loadState(storageKeys.plan, {}));
 let shoppingList = loadState(storageKeys.list, []);
@@ -1089,61 +1091,72 @@ function buildDaySelector() {
     .join("");
 }
 
+function buildMealDaySelector() {
+  if (!mealDaySelector) return;
+  mealDaySelector.innerHTML = dayOrder
+    .map(
+      (day) => `
+      <button class="day-chip ${activeMealDay === day.key ? "is-active" : ""}" data-meal-day="${day.key}">
+        ${day.label}
+      </button>`
+    )
+    .join("");
+}
+
 function buildPlanner() {
   dayGrid.innerHTML = "";
-  dayOrder.forEach((day) => {
-    const card = document.createElement("article");
-    card.className = "day-card";
-    card.dataset.day = day.key;
+  const day = dayOrder.find((d) => d.key === activeMealDay) || dayOrder[0];
+  const card = document.createElement("article");
+  card.className = "day-card";
+  card.dataset.day = day.key;
 
-    const dayState = planState[day.key] || { meal: "", servings: defaultServings };
-    const selected = dayState.meal || "";
-    const filterValue = mealFilters[day.key] || "";
-    const filterCategory = mealCategoryFilters[day.key] || "";
+  const dayState = planState[day.key] || { meal: "", servings: defaultServings };
+  const selected = dayState.meal || "";
+  const filterValue = mealFilters[day.key] || "";
+  const filterCategory = mealCategoryFilters[day.key] || "";
 
-    card.innerHTML = `
-      <div class="day-card__header">
-        <span class="day-card__dot"></span>
-        <div class="day-card__title">${day.label}</div>
-      </div>
-      <div class="input-grid">
-        <div class="input-row">
-          <label class="input-label" for="select-${day.key}">Velg middag</label>
-          <input class="input" type="text" placeholder="Søk etter rett" value="${filterValue}" data-day-filter="${day.key}" aria-label="Søk etter rett for ${day.label}">
-          <div class="input-with-action">
-            <select class="select" id="select-${day.key}" data-day="${day.key}">
-              ${renderMealOptions(filterValue, selected, filterCategory)}
-            </select>
-            <button class="button button--ghost button--icon" data-action="clear-meal" data-day="${day.key}" aria-label="Fjern valgt rett">−</button>
-          </div>
-          <div class="input-row">
-            <label class="input-label" for="category-${day.key}">Kategori</label>
-            <select class="select" id="category-${day.key}" data-day-category="${day.key}">
-              ${renderCategoryOptions(filterCategory)}
-            </select>
-          </div>
-          <div class="meal-results" data-results="${day.key}">
-            ${renderMealResults(filterValue, selected, day.key, filterCategory)}
-          </div>
+  card.innerHTML = `
+    <div class="day-card__header">
+      <span class="day-card__dot"></span>
+      <div class="day-card__title">${day.label}</div>
+    </div>
+    <div class="input-grid">
+      <div class="input-row">
+        <label class="input-label" for="select-${day.key}">Velg middag</label>
+        <input class="input" type="text" placeholder="Søk etter rett" value="${filterValue}" data-day-filter="${day.key}" aria-label="Søk etter rett for ${day.label}">
+        <div class="input-with-action">
+          <select class="select" id="select-${day.key}" data-day="${day.key}">
+            ${renderMealOptions(filterValue, selected, filterCategory)}
+          </select>
+          <button class="button button--ghost button--icon" data-action="clear-meal" data-day="${day.key}" aria-label="Fjern valgt rett">−</button>
         </div>
         <div class="input-row">
-          <label class="input-label" for="servings-${day.key}">Antall personer</label>
-          <div class="servings-counter" data-servings="${day.key}">
-            <button class="button button--ghost button--icon" type="button" data-action="servings-dec" data-day="${day.key}" aria-label="Færre personer">−</button>
-            <div class="servings-value" aria-live="polite">${dayState.servings || defaultServings}</div>
-            <button class="button button--ghost button--icon" type="button" data-action="servings-inc" data-day="${day.key}" aria-label="Flere personer">+</button>
-          </div>
+          <label class="input-label" for="category-${day.key}">Kategori</label>
+          <select class="select" id="category-${day.key}" data-day-category="${day.key}">
+            ${renderCategoryOptions(filterCategory)}
+          </select>
+        </div>
+        <div class="meal-results" data-results="${day.key}">
+          ${renderMealResults(filterValue, selected, day.key, filterCategory)}
         </div>
       </div>
-      <div class="ingredients" data-ingredients="${day.key}">${renderIngredientsContent(
-        selected,
-        day.key,
-        dayState.servings
-      )}</div>
-    `;
+      <div class="input-row">
+        <label class="input-label" for="servings-${day.key}">Antall personer</label>
+        <div class="servings-counter" data-servings="${day.key}">
+          <button class="button button--ghost button--icon" type="button" data-action="servings-dec" data-day="${day.key}" aria-label="Færre personer">−</button>
+          <div class="servings-value" aria-live="polite">${dayState.servings || defaultServings}</div>
+          <button class="button button--ghost button--icon" type="button" data-action="servings-inc" data-day="${day.key}" aria-label="Flere personer">+</button>
+        </div>
+      </div>
+    </div>
+    <div class="ingredients" data-ingredients="${day.key}">${renderIngredientsContent(
+      selected,
+      day.key,
+      dayState.servings
+    )}</div>
+  `;
 
-    dayGrid.appendChild(card);
-  });
+  dayGrid.appendChild(card);
 }
 
 function renderIngredientsContent(mealId, dayKey, servings = defaultServings) {
@@ -1936,6 +1949,16 @@ daySelector?.addEventListener("click", (event) => {
   renderDayPlan();
 });
 
+mealDaySelector?.addEventListener("click", (event) => {
+  const button = event.target.closest("[data-meal-day]");
+  if (!button) return;
+  const dayKey = button.getAttribute("data-meal-day");
+  if (!dayKey) return;
+  activeMealDay = dayKey;
+  buildMealDaySelector();
+  buildPlanner();
+});
+
 reminderForm?.addEventListener("submit", (event) => {
   event.preventDefault();
   const text = reminderInput?.value?.trim();
@@ -1956,5 +1979,6 @@ buildPlanner();
 renderShoppingList();
 setActiveTab(activeTab);
 buildDaySelector();
+buildMealDaySelector();
 renderDayPlan();
 renderBudget();
