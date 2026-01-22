@@ -222,7 +222,9 @@ function renderIngredientsContent(mealId, dayKey, servings = defaultServings) {
           <span class="ingredient__name">${ingredient.item}</span>
           <span class="ingredient__amount">${formatAmount(ingredient.amount, servings)}</span>
         </div>
-        <button class="button pill-button" data-action="add-ingredient" data-day="${dayKey}" data-index="${idx}" aria-label="Legg til ${ingredient.item} i handlelisten">+</button>
+        <button class="button pill-button ${isIngredientInList(ingredient, meal.name, dayKey, servings) ? "is-added" : ""}" data-action="add-ingredient" data-day="${dayKey}" data-index="${idx}" aria-label="${isIngredientInList(ingredient, meal.name, dayKey, servings) ? `Fjern ${ingredient.item} fra handlelisten` : `Legg til ${ingredient.item} i handlelisten`}">
+          ${isIngredientInList(ingredient, meal.name, dayKey, servings) ? "−" : "+"}
+        </button>
       </li>
     `
     )
@@ -276,8 +278,7 @@ function addIngredient(dayKey, index) {
   const meal = meals.find((m) => m.id === mealId);
   if (!meal || !meal.ingredients[index]) return;
 
-  const ingredient = withServings(meal.ingredients[index], dayState.servings);
-  addToShoppingList(ingredient, meal.name, dayKey);
+  toggleIngredient(dayKey, index);
 }
 
 function addAllIngredients(dayKey) {
@@ -288,6 +289,7 @@ function addAllIngredients(dayKey) {
   meal.ingredients.forEach((ingredient) =>
     addToShoppingList(withServings(ingredient, dayState.servings), meal.name, dayKey)
   );
+  refreshDayIngredients(dayKey);
 }
 
 function addToShoppingList(ingredient, mealName, dayKey) {
@@ -314,6 +316,23 @@ function addToShoppingList(ingredient, mealName, dayKey) {
   renderShoppingList();
 }
 
+function removeFromShoppingList(ingredient, mealName, dayKey) {
+  const key = `${ingredient.item.toLowerCase()}|${ingredient.amount || ""}`;
+  const source = `${mealName} (${labelForDay(dayKey)})`;
+  const existing = shoppingList.find((entry) => entry.key === key);
+  if (!existing) return;
+
+  existing.count -= 1;
+  existing.sources = existing.sources.filter((s) => s !== source);
+
+  if (existing.count <= 0) {
+    shoppingList = shoppingList.filter((entry) => entry.key !== key);
+  }
+
+  saveState(storageKeys.list, shoppingList);
+  renderShoppingList();
+}
+
 function labelForDay(key) {
   const found = dayOrder.find((day) => day.key === key);
   return found ? found.label : key;
@@ -324,6 +343,15 @@ function withServings(ingredient, servings) {
     ...ingredient,
     amount: formatAmount(ingredient.amount, servings)
   };
+}
+
+function isIngredientInList(ingredient, mealName, dayKey, servings = defaultServings) {
+  const scaled = withServings(ingredient, servings);
+  const key = `${scaled.item.toLowerCase()}|${scaled.amount || ""}`;
+  const source = `${mealName} (${labelForDay(dayKey)})`;
+  const existing = shoppingList.find((entry) => entry.key === key);
+  if (!existing) return false;
+  return existing.sources.includes(source);
 }
 
 function formatAmount(amount, servings) {
@@ -345,6 +373,30 @@ function clearShoppingList() {
   shoppingList = [];
   saveState(storageKeys.list, shoppingList);
   renderShoppingList();
+}
+
+function refreshDayIngredients(dayKey) {
+  const dayState = planState[dayKey] || { meal: "", servings: defaultServings };
+  const ingredientsEl = document.querySelector(`[data-ingredients="${dayKey}"]`);
+  if (ingredientsEl) {
+    ingredientsEl.innerHTML = renderIngredientsContent(dayState.meal, dayKey, dayState.servings);
+  }
+}
+
+function toggleIngredient(dayKey, index) {
+  const dayState = planState[dayKey] || { meal: "", servings: defaultServings };
+  const meal = meals.find((m) => m.id === dayState.meal);
+  if (!meal || !meal.ingredients[index]) return;
+
+  const scaled = withServings(meal.ingredients[index], dayState.servings);
+  const already = isIngredientInList(meal.ingredients[index], meal.name, dayKey, dayState.servings);
+
+  if (already) {
+    removeFromShoppingList(scaled, meal.name, dayKey);
+  } else {
+    addToShoppingList(scaled, meal.name, dayKey);
+  }
+  refreshDayIngredients(dayKey);
 }
 
 dayGrid.addEventListener("change", (event) => {

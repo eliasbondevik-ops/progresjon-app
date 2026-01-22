@@ -322,6 +322,13 @@ body {
   box-shadow: 0 10px 26px rgba(125, 226, 255, 0.25);
 }
 
+.pill-button.is-added {
+  background: rgba(255, 180, 122, 0.2);
+  border-color: var(--accent-strong);
+  color: var(--accent-strong);
+  box-shadow: 0 8px 22px rgba(255, 180, 122, 0.25);
+}
+
 .add-all {
   align-self: flex-start;
 }
