@@ -589,6 +589,21 @@ body {
   align-items: center;
 }
 
+.shopping-item.is-purchased {
+  opacity: 0.6;
+  text-decoration: line-through;
+}
+
+.shopping-item__check {
+  display: inline-flex;
+  align-items: center;
+}
+
+.shopping-item__check input {
+  width: 18px;
+  height: 18px;
+}
+
 .shopping-item__text {
   display: flex;
   flex-direction: column;

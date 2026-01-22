@@ -545,7 +545,11 @@ function renderShoppingList() {
   shoppingListEl.innerHTML = shoppingList
     .map(
       (entry) => `
-      <li class="shopping-item">
+      <li class="shopping-item ${entry.purchased ? "is-purchased" : ""}">
+        <label class="shopping-item__check">
+          <input type="checkbox" data-action="toggle-purchased" data-key="${entry.key}" ${entry.purchased ? "checked" : ""} aria-label="Marker ${entry.item} som handlet">
+          <span></span>
+        </label>
         <div class="shopping-item__text">
           <span class="shopping-item__name">${entry.item}</span>
           <span class="shopping-item__meta">${entry.amount || "Mengde ikke spesifisert"} · ${entry.sources.join(", ")}</span>
@@ -714,7 +718,8 @@ function addToShoppingList(ingredient, mealName, dayKey) {
       item: ingredient.item,
       amount: ingredient.amount,
       count: 1,
-      sources: [source]
+      sources: [source],
+      purchased: false
     });
   }
 
@@ -751,6 +756,14 @@ function removeByKey(key) {
   if (existing.count <= 0) {
     shoppingList = shoppingList.filter((entry) => entry.key !== key);
   }
+  saveState(storageKeys.list, shoppingList);
+  renderShoppingList();
+}
+
+function togglePurchased(key) {
+  const existing = shoppingList.find((entry) => entry.key === key);
+  if (!existing) return;
+  existing.purchased = !existing.purchased;
   saveState(storageKeys.list, shoppingList);
   renderShoppingList();
 }
@@ -1012,10 +1025,19 @@ document.querySelector(".topbar")?.addEventListener("click", (event) => {
 
 shoppingListEl.addEventListener("click", (event) => {
   const button = event.target.closest("[data-action='remove-shopping']");
-  if (!button) return;
-  const key = button.getAttribute("data-key");
-  if (!key) return;
-  removeByKey(key);
+  if (button) {
+    const key = button.getAttribute("data-key");
+    if (!key) return;
+    removeByKey(key);
+    return;
+  }
+
+  const checkbox = event.target.closest("[data-action='toggle-purchased']");
+  if (checkbox) {
+    const key = checkbox.getAttribute("data-key");
+    if (!key) return;
+    togglePurchased(key);
+  }
 });
 
 daySelector?.addEventListener("click", (event) => {
