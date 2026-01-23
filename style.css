@@ -901,6 +901,12 @@ body {
   font-weight: 800;
 }
 
+.receipt-overlay-img {
+  max-width: 100%;
+  max-height: 70vh;
+  border-radius: var(--radius-sm);
+}
+
 .receipt-form {
   display: flex;
   flex-direction: column;

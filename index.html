@@ -184,6 +184,14 @@
             </div>
             <ul id="budget-expenses" class="budget-expenses"></ul>
           </div>
+
+          <div class="budget-card">
+            <div class="budget-card__header">
+              <div class="budget-card__title">Kvitteringer</div>
+              <div class="budget-card__subtitle">Se opplastede bilder</div>
+            </div>
+            <ul id="budget-receipts" class="budget-expenses"></ul>
+          </div>
         </div>
       </section>
 
@@ -221,6 +229,22 @@
         <button class="button button--ghost button--icon" data-action="close-steps" aria-label="Lukk">×</button>
       </div>
       <div id="steps-body" class="overlay__body"></div>
+    </div>
+  </div>
+
+  <div id="receipt-overlay" class="overlay" hidden>
+    <div class="overlay__backdrop" data-action="close-receipt"></div>
+    <div class="overlay__dialog" role="dialog" aria-modal="true" aria-labelledby="receipt-overlay-title">
+      <div class="overlay__header">
+        <div>
+          <div id="receipt-overlay-title" class="overlay__title">Kvittering</div>
+          <div id="receipt-overlay-subtitle" class="overlay__subtitle"></div>
+        </div>
+        <button class="button button--ghost button--icon" data-action="close-receipt" aria-label="Lukk">×</button>
+      </div>
+      <div class="overlay__body">
+        <img id="receipt-overlay-img" class="receipt-overlay-img" alt="Kvittering" />
+      </div>
     </div>
   </div>
 

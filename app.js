@@ -997,6 +997,7 @@ const expenseAmount = document.getElementById("expense-amount");
 const expenseDate = document.getElementById("expense-date");
 const expenseCategory = document.getElementById("expense-category");
 const expenseNote = document.getElementById("expense-note");
+const budgetReceiptsEl = document.getElementById("budget-receipts");
 const receiptForm = document.getElementById("receipt-form");
 const receiptFile = document.getElementById("receipt-file");
 const receiptPreview = document.getElementById("receipt-preview");
@@ -1006,6 +1007,10 @@ const receiptCategory = document.getElementById("receipt-category");
 const receiptNote = document.getElementById("receipt-note");
 const receiptStatus = document.getElementById("receipt-status");
 const receiptAnalyze = document.getElementById("receipt-analyze");
+const receiptOverlay = document.getElementById("receipt-overlay");
+const receiptOverlayImg = document.getElementById("receipt-overlay-img");
+const receiptOverlayTitle = document.getElementById("receipt-overlay-title");
+const receiptOverlaySubtitle = document.getElementById("receipt-overlay-subtitle");
 let activeTab = "middagsplan";
 let activeDayPlan = dayOrder[0].key;
 let activeMealDay = dayOrder[0].key;
@@ -1020,6 +1025,7 @@ let budgetState = loadState(storageKeys.budget, {
   goal: 4000,
   expenses: []
 });
+let receiptState = [];
 
 function loadState(key, fallback) {
   try {
@@ -1506,6 +1512,8 @@ function renderBudget() {
         )
         .join("")
     : `<li class="empty-state">Ingen transaksjoner denne måneden.</li>`;
+
+  renderReceipts();
 }
 
 function currentMonthKey() {
@@ -1520,6 +1528,45 @@ function fileToDataUrl(file) {
     reader.onerror = reject;
     reader.readAsDataURL(file);
   });
+}
+
+async function fetchReceipts() {
+  try {
+    const resp = await fetch("/api/receipts");
+    const json = await resp.json();
+    receiptState = json.receipts || [];
+  } catch (err) {
+    console.error("Kunne ikke hente kvitteringer", err);
+    receiptState = [];
+  }
+}
+
+function renderReceipts() {
+  if (!budgetReceiptsEl) return;
+  if (!receiptState.length) {
+    budgetReceiptsEl.innerHTML = `<li class="empty-state">Ingen kvitteringer.</li>`;
+    return;
+  }
+  budgetReceiptsEl.innerHTML = receiptState
+    .map(
+      (r) => `
+      <li class="expense-item">
+        <div>
+          <div class="expense-item__amount">${Number(r.amount || 0).toFixed(0)} kr</div>
+          <div class="expense-item__meta">${r.note || r.filename || "Kvittering"}</div>
+        </div>
+        <div class="expense-item__meta">
+          ${r.date || ""} · ${r.category || "Annet"}
+          ${
+            r.imageData
+              ? `<button class="button button--ghost button--icon" data-action="view-receipt" data-id="${r.id}" aria-label="Vis kvittering">👁</button>`
+              : ""
+          }
+        </div>
+      </li>
+    `
+    )
+    .join("");
 }
 
 function filterMeals(query, category) {
@@ -1701,6 +1748,12 @@ function closeStepsOverlay() {
   stepsOverlay.hidden = true;
 }
 
+function closeReceiptOverlay() {
+  if (!receiptOverlay) return;
+  receiptOverlay.classList.remove("is-open");
+  receiptOverlay.hidden = true;
+}
+
 function removeReminder(id) {
   const dayList = remindersState[activeDayPlan] || [];
   remindersState = {
@@ -1773,6 +1826,7 @@ document.body.addEventListener("click", (event) => {
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape") {
     closeStepsOverlay();
+    closeReceiptOverlay();
   }
 });
 
@@ -1847,6 +1901,8 @@ receiptForm?.addEventListener("submit", async (event) => {
       })
     });
     receiptStatus.textContent = "Kvittering lagret.";
+    await fetchReceipts();
+    renderReceipts();
   } catch (err) {
     console.error(err);
     receiptStatus.textContent = "Lagret lokalt (backend ikke tilgjengelig).";
@@ -1879,6 +1935,8 @@ receiptAnalyze?.addEventListener("click", async () => {
     if (json.date) receiptDate.value = json.date;
     if (json.category) receiptCategory.value = json.category;
     receiptStatus.textContent = "Analyse fullført (stub). Rediger og lagre.";
+    await fetchReceipts();
+    renderReceipts();
   } catch (err) {
     console.error(err);
     receiptStatus.textContent = "Kunne ikke analysere. Fyll inn manuelt.";
@@ -2012,3 +2070,22 @@ buildDaySelector();
 buildMealDaySelector();
 renderDayPlan();
 renderBudget();
+document.body.addEventListener("click", (event) => {
+  const viewBtn = event.target.closest("[data-action='view-receipt']");
+  if (viewBtn) {
+    const id = viewBtn.getAttribute("data-id");
+    const receipt = receiptState.find((r) => r.id === id);
+    if (receipt && receipt.imageData && receiptOverlay && receiptOverlayImg) {
+      receiptOverlayImg.src = receipt.imageData;
+      receiptOverlayTitle.textContent = receipt.note || receipt.filename || "Kvittering";
+      receiptOverlaySubtitle.textContent = `${receipt.date || ""} · ${Number(receipt.amount || 0).toFixed(0)} kr`;
+      receiptOverlay.hidden = false;
+      receiptOverlay.classList.add("is-open");
+    }
+  }
+
+  const closeReceipt = event.target.closest("[data-action='close-receipt']");
+  if (closeReceipt) {
+    closeReceiptOverlay();
+  }
+});
