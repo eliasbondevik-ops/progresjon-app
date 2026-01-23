@@ -985,6 +985,7 @@ const stepsTitleEl = document.getElementById("steps-title");
 const stepsSubtitleEl = document.getElementById("steps-subtitle");
 const stepsBodyEl = document.getElementById("steps-body");
 const budgetMonthLabel = document.getElementById("budget-month-label");
+const budgetMonthSelector = document.getElementById("budget-month-selector");
 const budgetUsedEl = document.getElementById("budget-used");
 const budgetGoalLabelEl = document.getElementById("budget-goal-label");
 const donutValue = document.getElementById("donut-value");
@@ -1022,13 +1023,16 @@ let shoppingList = loadState(storageKeys.list, []);
 let remindersState = loadState(storageKeys.reminders, {});
 const mealFilters = {};
 const mealCategoryFilters = {};
-let budgetState = loadState(storageKeys.budget, {
-  month: currentMonthKey(),
-  goal: 4000,
-  expenses: []
-});
+let budgetState = migrateBudgetState(
+  loadState(storageKeys.budget, {
+    months: {
+      [currentMonthKey()]: { goal: 4000, expenses: [] }
+    }
+  })
+);
 let receiptState = [];
 let currentReceiptDataUrl = "";
+let activeBudgetMonth = currentMonthKey();
 
 function loadState(key, fallback) {
   try {
@@ -1065,11 +1069,19 @@ function migratePlanState(state) {
 }
 
 function migrateBudgetState(state) {
-  if (!state || !state.month) {
+  // Legacy format: { month, goal, expenses }
+  if (state && state.month && Array.isArray(state.expenses)) {
     return {
-      month: currentMonthKey(),
-      goal: 4000,
-      expenses: []
+      months: {
+        [state.month]: { goal: state.goal || 4000, expenses: state.expenses || [] }
+      }
+    };
+  }
+  if (!state || !state.months) {
+    return {
+      months: {
+        [currentMonthKey()]: { goal: 4000, expenses: [] }
+      }
     };
   }
   return state;
@@ -1086,6 +1098,7 @@ function setActiveTab(name) {
 
   if (name === "kvitteringer") {
     renderBudget();
+    buildBudgetMonthSelector();
   }
 }
 
@@ -1108,6 +1121,18 @@ function buildMealDaySelector() {
       (day) => `
       <button class="day-chip ${activeMealDay === day.key ? "is-active" : ""}" data-meal-day="${day.key}">
         ${day.label}
+      </button>`
+    )
+    .join("");
+}
+
+function buildBudgetMonthSelector() {
+  if (!budgetMonthSelector) return;
+  budgetMonthSelector.innerHTML = monthLabels()
+    .map(
+      (m) => `
+      <button class="day-chip ${activeBudgetMonth === m.key ? "is-active" : ""}" data-budget-month="${m.key}">
+        ${m.label}
       </button>`
     )
     .join("");
@@ -1440,11 +1465,9 @@ function togglePurchased(key) {
 }
 
 function addExpense({ amount, date, category, note }) {
-  const currentMonth = currentMonthKey();
-  if (budgetState.month !== currentMonth) {
-    budgetState = migrateBudgetState({ month: currentMonth, goal: budgetState.goal, expenses: [] });
-  }
-  budgetState.expenses.unshift({
+  const monthKey = date ? date.slice(0, 7) : currentMonthKey();
+  ensureMonth(monthKey);
+  budgetState.months[monthKey].expenses.unshift({
     id: `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`,
     amount,
     date,
@@ -1457,14 +1480,12 @@ function addExpense({ amount, date, category, note }) {
 
 function renderBudget() {
   if (!budgetMonthLabel) return;
-  const currentMonth = currentMonthKey();
-  if (budgetState.month !== currentMonth) {
-    budgetState = migrateBudgetState({ month: currentMonth, goal: budgetState.goal, expenses: [] });
-  }
+  ensureMonth(activeBudgetMonth);
 
-  const used = budgetState.expenses.reduce((sum, e) => sum + Number(e.amount || 0), 0);
-  const goal = Number(budgetState.goal || 0);
-  budgetMonthLabel.textContent = currentMonth;
+  const monthBudget = getMonthBudget(activeBudgetMonth);
+  const used = monthBudget.expenses.reduce((sum, e) => sum + Number(e.amount || 0), 0);
+  const goal = Number(monthBudget.goal || 0);
+  budgetMonthLabel.textContent = activeBudgetMonth;
   budgetUsedEl.textContent = `${Math.round(used)} kr`;
   budgetGoalLabelEl.textContent = goal ? `av ${Math.round(goal)} kr` : "Ingen mål satt";
 
@@ -1481,7 +1502,7 @@ function renderBudget() {
     <div>Gjenstår: ${goal ? Math.max(0, goal - used).toFixed(0) : "–"} kr</div>
   `;
 
-  const byCat = budgetState.expenses.reduce((acc, e) => {
+  const byCat = monthBudget.expenses.reduce((acc, e) => {
     const key = e.category || "Annet";
     acc[key] = (acc[key] || 0) + Number(e.amount || 0);
     return acc;
@@ -1500,8 +1521,8 @@ function renderBudget() {
         .join("")
     : `<div class="empty-state">Ingen utgifter registrert ennå.</div>`;
 
-  budgetExpensesEl.innerHTML = budgetState.expenses.length
-    ? budgetState.expenses
+  budgetExpensesEl.innerHTML = monthBudget.expenses.length
+    ? monthBudget.expenses
         .map(
           (e) => `
         <li class="expense-item">
@@ -1522,6 +1543,30 @@ function renderBudget() {
 function currentMonthKey() {
   const now = new Date();
   return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+}
+
+function ensureMonth(monthKey) {
+  if (!budgetState.months) budgetState.months = {};
+  if (!budgetState.months[monthKey]) {
+    budgetState.months[monthKey] = { goal: budgetState.months[currentMonthKey()]?.goal || 4000, expenses: [] };
+  }
+}
+
+function getMonthBudget(monthKey) {
+  ensureMonth(monthKey);
+  return budgetState.months[monthKey];
+}
+
+function monthLabels() {
+  const months = [];
+  const now = new Date();
+  for (let i = 0; i < 12; i++) {
+    const d = new Date(now.getFullYear(), i, 1);
+    const key = `${d.getFullYear()}-${String(i + 1).padStart(2, "0")}`;
+    const label = d.toLocaleString("nb-NO", { month: "long" });
+    months.push({ key, label });
+  }
+  return months;
 }
 
 function fileToDataUrl(file) {
@@ -1546,11 +1591,12 @@ async function fetchReceipts() {
 
 function renderReceipts() {
   if (!budgetReceiptsEl) return;
-  if (!receiptState.length) {
+  const filtered = receiptState.filter((r) => (r.date || "").startsWith(activeBudgetMonth));
+  if (!filtered.length) {
     budgetReceiptsEl.innerHTML = `<li class="empty-state">Ingen kvitteringer.</li>`;
     return;
   }
-  budgetReceiptsEl.innerHTML = receiptState
+  budgetReceiptsEl.innerHTML = filtered
     .map(
       (r) => `
       <li class="expense-item">
@@ -1834,12 +1880,15 @@ document.addEventListener("keydown", (event) => {
 });
 
 budgetSetGoalBtn?.addEventListener("click", () => {
-  const current = budgetState.goal || 0;
+  const current = getMonthBudget(activeBudgetMonth).goal || 0;
   const input = prompt("Sett månedsbudsjett (kr):", String(current));
   if (input === null) return;
   const value = Number(input);
   if (Number.isNaN(value) || value <= 0) return;
-  budgetState.goal = value;
+  budgetState.months[activeBudgetMonth] = {
+    ...getMonthBudget(activeBudgetMonth),
+    goal: value
+  };
   saveState(storageKeys.budget, budgetState);
   renderBudget();
 });
@@ -2083,6 +2132,16 @@ reminderForm?.addEventListener("submit", (event) => {
   reminderInput.value = "";
 });
 
+budgetMonthSelector?.addEventListener("click", (event) => {
+  const button = event.target.closest("[data-budget-month]");
+  if (!button) return;
+  const monthKey = button.getAttribute("data-budget-month");
+  if (!monthKey) return;
+  activeBudgetMonth = monthKey;
+  buildBudgetMonthSelector();
+  renderBudget();
+});
+
 reminderListEl?.addEventListener("click", (event) => {
   const button = event.target.closest("[data-action='remove-reminder']");
   if (!button) return;
@@ -2099,6 +2158,7 @@ buildMealDaySelector();
 renderDayPlan();
 fetchReceipts().finally(() => {
   renderBudget();
+  buildBudgetMonthSelector();
 });
 document.body.addEventListener("click", (event) => {
   const viewBtn = event.target.closest("[data-action='view-receipt']");
