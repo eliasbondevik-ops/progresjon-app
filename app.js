@@ -1001,6 +1001,7 @@ const budgetReceiptsEl = document.getElementById("budget-receipts");
 const receiptForm = document.getElementById("receipt-form");
 const receiptFile = document.getElementById("receipt-file");
 const receiptPreview = document.getElementById("receipt-preview");
+const receiptViewCurrent = document.getElementById("receipt-view-current");
 const receiptAmount = document.getElementById("receipt-amount");
 const receiptDate = document.getElementById("receipt-date");
 const receiptCategory = document.getElementById("receipt-category");
@@ -1026,6 +1027,7 @@ let budgetState = loadState(storageKeys.budget, {
   expenses: []
 });
 let receiptState = [];
+let currentReceiptDataUrl = "";
 
 function loadState(key, fallback) {
   try {
@@ -1863,6 +1865,7 @@ receiptFile?.addEventListener("change", async () => {
   const dataUrl = await fileToDataUrl(file);
   receiptPreview.innerHTML = `<img src="${dataUrl}" alt="Kvittering">`;
   receiptStatus.textContent = `Valgt: ${file.name}`;
+  currentReceiptDataUrl = dataUrl;
 });
 
 receiptForm?.addEventListener("submit", async (event) => {
@@ -1881,7 +1884,7 @@ receiptForm?.addEventListener("submit", async (event) => {
   const category = receiptCategory.value || "Annet";
   const note = receiptNote.value || file.name;
   receiptStatus.textContent = "Lagrer kvittering...";
-  const imageData = await fileToDataUrl(file);
+  const imageData = currentReceiptDataUrl || (await fileToDataUrl(file));
 
   // Oppdater budsjett lokalt
   addExpense({ amount, date, category, note });
@@ -1918,8 +1921,9 @@ receiptAnalyze?.addEventListener("click", async () => {
     receiptStatus.textContent = "Velg et bilde først.";
     return;
   }
-  receiptStatus.textContent = "Analyserer (stub)...";
-  const dataUrl = await fileToDataUrl(file);
+  receiptStatus.textContent = "Analyserer...";
+  const dataUrl = currentReceiptDataUrl || (await fileToDataUrl(file));
+  currentReceiptDataUrl = dataUrl;
   try {
     const resp = await fetch("/api/analyze-receipt", {
       method: "POST",
@@ -1934,12 +1938,22 @@ receiptAnalyze?.addEventListener("click", async () => {
     if (json.total) receiptAmount.value = json.total;
     if (json.date) receiptDate.value = json.date;
     if (json.category) receiptCategory.value = json.category;
-    receiptStatus.textContent = "Analyse fullført (stub). Rediger og lagre.";
-    await fetchReceipts();
-    renderReceipts();
+    receiptStatus.textContent = "Analyse fullført. Rediger og lagre.";
   } catch (err) {
     console.error(err);
     receiptStatus.textContent = "Kunne ikke analysere. Fyll inn manuelt.";
+  }
+});
+
+receiptViewCurrent?.addEventListener("click", () => {
+  if (currentReceiptDataUrl) {
+    receiptOverlayImg.src = currentReceiptDataUrl;
+    receiptOverlayTitle.textContent = receiptNote.value || "Kvittering";
+    receiptOverlaySubtitle.textContent = receiptDate.value || "";
+    receiptOverlay.hidden = false;
+    receiptOverlay.classList.add("is-open");
+  } else {
+    receiptStatus.textContent = "Ingen kvittering å vise.";
   }
 });
 
@@ -2069,7 +2083,9 @@ setActiveTab(activeTab);
 buildDaySelector();
 buildMealDaySelector();
 renderDayPlan();
-renderBudget();
+fetchReceipts().finally(() => {
+  renderBudget();
+});
 document.body.addEventListener("click", (event) => {
   const viewBtn = event.target.closest("[data-action='view-receipt']");
   if (viewBtn) {

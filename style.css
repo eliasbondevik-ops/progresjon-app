@@ -951,6 +951,16 @@ body {
   background: rgba(255, 255, 255, 0.02);
 }
 
+.receipt-preview-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.receipt-preview-row .button {
+  white-space: nowrap;
+}
+
 .receipt-preview img {
   max-height: 120px;
   object-fit: contain;
