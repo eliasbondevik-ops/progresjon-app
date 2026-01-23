@@ -2078,6 +2078,10 @@ receiptAnalyze?.addEventListener("click", async () => {
         amount: receiptAmount.value || undefined
       })
     });
+    if (resp.status === 413) {
+      receiptStatus.textContent = "Bilde er for stort. Bruk lavere oppløsning eller PDF.";
+      return;
+    }
     const json = await resp.json();
     if (json.total) receiptAmount.value = json.total;
     if (json.date) receiptDate.value = json.date;

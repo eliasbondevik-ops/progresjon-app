@@ -77,12 +77,12 @@ function send(res, status, data) {
   res.end(JSON.stringify(data));
 }
 
-function parseBody(req) {
+function parseBody(req, limitBytes = 15 * 1024 * 1024) {
   return new Promise((resolve, reject) => {
     let body = "";
     req.on("data", (chunk) => {
       body += chunk.toString();
-      if (body.length > 5 * 1024 * 1024) {
+      if (body.length > limitBytes) {
         reject(new Error("Request too large"));
         req.destroy();
       }
@@ -149,6 +149,9 @@ const server = http.createServer(async (req, res) => {
       };
       return send(res, 200, resp);
     } catch (err) {
+      if (err.message && err.message.includes("Request too large")) {
+        return send(res, 413, { ok: false, error: "Request too large" });
+      }
       console.error(err);
       return send(res, 400, { ok: false, error: "Invalid JSON" });
     }
