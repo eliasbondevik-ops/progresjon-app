@@ -1010,6 +1010,7 @@ const receiptStatus = document.getElementById("receipt-status");
 const receiptAnalyze = document.getElementById("receipt-analyze");
 const receiptOverlay = document.getElementById("receipt-overlay");
 const receiptOverlayImg = document.getElementById("receipt-overlay-img");
+const receiptOverlayEmbed = document.getElementById("receipt-overlay-embed");
 const receiptOverlayTitle = document.getElementById("receipt-overlay-title");
 const receiptOverlaySubtitle = document.getElementById("receipt-overlay-subtitle");
 let activeTab = "middagsplan";
@@ -1863,7 +1864,11 @@ receiptFile?.addEventListener("change", async () => {
     return;
   }
   const dataUrl = await fileToDataUrl(file);
-  receiptPreview.innerHTML = `<img src="${dataUrl}" alt="Kvittering">`;
+  if (file.type === "application/pdf" || dataUrl.startsWith("data:application/pdf")) {
+    receiptPreview.textContent = `PDF valgt: ${file.name}`;
+  } else {
+    receiptPreview.innerHTML = `<img src="${dataUrl}" alt="Kvittering">`;
+  }
   receiptStatus.textContent = `Valgt: ${file.name}`;
   currentReceiptDataUrl = dataUrl;
 });
@@ -1947,7 +1952,16 @@ receiptAnalyze?.addEventListener("click", async () => {
 
 receiptViewCurrent?.addEventListener("click", () => {
   if (currentReceiptDataUrl) {
-    receiptOverlayImg.src = currentReceiptDataUrl;
+    const isPdf = currentReceiptDataUrl.startsWith("data:application/pdf");
+    if (isPdf && receiptOverlayEmbed) {
+      receiptOverlayEmbed.hidden = false;
+      receiptOverlayImg.hidden = true;
+      receiptOverlayEmbed.src = currentReceiptDataUrl;
+    } else {
+      receiptOverlayEmbed.hidden = true;
+      receiptOverlayImg.hidden = false;
+      receiptOverlayImg.src = currentReceiptDataUrl;
+    }
     receiptOverlayTitle.textContent = receiptNote.value || "Kvittering";
     receiptOverlaySubtitle.textContent = receiptDate.value || "";
     receiptOverlay.hidden = false;
@@ -2091,8 +2105,17 @@ document.body.addEventListener("click", (event) => {
   if (viewBtn) {
     const id = viewBtn.getAttribute("data-id");
     const receipt = receiptState.find((r) => r.id === id);
-    if (receipt && receipt.imageData && receiptOverlay && receiptOverlayImg) {
-      receiptOverlayImg.src = receipt.imageData;
+    if (receipt && receipt.imageData && receiptOverlay) {
+      const isPdf = receipt.imageData.startsWith("data:application/pdf");
+      if (isPdf && receiptOverlayEmbed) {
+        receiptOverlayEmbed.hidden = false;
+        receiptOverlayImg.hidden = true;
+        receiptOverlayEmbed.src = receipt.imageData;
+      } else {
+        receiptOverlayEmbed.hidden = true;
+        receiptOverlayImg.hidden = false;
+        receiptOverlayImg.src = receipt.imageData;
+      }
       receiptOverlayTitle.textContent = receipt.note || receipt.filename || "Kvittering";
       receiptOverlaySubtitle.textContent = `${receipt.date || ""} · ${Number(receipt.amount || 0).toFixed(0)} kr`;
       receiptOverlay.hidden = false;
