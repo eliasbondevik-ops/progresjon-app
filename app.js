@@ -496,6 +496,362 @@ const meals = [
       { item: "Romaine/hjertesalat", amount: "2 stk" },
       { item: "Blåmuggost eller feta", amount: "100 g" }
     ]
+  },
+  {
+    id: "kylling-tikka-masala",
+    name: "Kylling tikka masala",
+    category: "Kylling",
+    ingredients: [
+      { item: "Kyllingbryst", amount: "500 g" },
+      { item: "Tikka masala saus", amount: "1 glass" },
+      { item: "Yoghurt naturell", amount: "1 beger" },
+      { item: "Løk", amount: "1 stk" },
+      { item: "Ris", amount: "400 g" }
+    ]
+  },
+  {
+    id: "lammekoteletter",
+    name: "Lammekoteletter med poteter",
+    category: "Kjøtt",
+    ingredients: [
+      { item: "Lammekoteletter", amount: "6 stk" },
+      { item: "Poteter", amount: "800 g" },
+      { item: "Hvitløk", amount: "2 fedd" },
+      { item: "Rosmarin", amount: "1 bunt" },
+      { item: "Olivenolje", amount: "2 ss" }
+    ]
+  },
+  {
+    id: "vegetar-lasagne",
+    name: "Vegetar lasagne",
+    category: "Vegetar",
+    ingredients: [
+      { item: "Lasagneplater", amount: "1 pakke" },
+      { item: "Hakket tomat", amount: "2 bokser" },
+      { item: "Spinat", amount: "1 pose" },
+      { item: "Cottage cheese", amount: "1 beger" },
+      { item: "Revet ost", amount: "200 g" }
+    ]
+  },
+  {
+    id: "poke-bowl-laks",
+    name: "Poke bowl med laks",
+    category: "Fisk",
+    ingredients: [
+      { item: "Laksefilet", amount: "400 g" },
+      { item: "Sushiris", amount: "400 g" },
+      { item: "Soyasaus", amount: "3 ss" },
+      { item: "Avokado", amount: "1 stk" },
+      { item: "Agurk", amount: "1 stk" },
+      { item: "Sesamfrø", amount: "2 ss" }
+    ]
+  },
+  {
+    id: "kjottboller-tomat",
+    name: "Kjøttboller i tomatsaus",
+    category: "Kjøtt",
+    ingredients: [
+      { item: "Kjøttboller", amount: "500 g" },
+      { item: "Hakket tomat", amount: "2 bokser" },
+      { item: "Løk", amount: "1 stk" },
+      { item: "Hvitløk", amount: "2 fedd" },
+      { item: "Pasta", amount: "400 g" }
+    ]
+  },
+  {
+    id: "gnocchi-pesto",
+    name: "Gnocchi med pesto",
+    category: "Pasta",
+    ingredients: [
+      { item: "Gnocchi", amount: "500 g" },
+      { item: "Grønn pesto", amount: "1 glass" },
+      { item: "Cherrytomat", amount: "1 kurv" },
+      { item: "Parmesan", amount: "40 g" }
+    ]
+  },
+  {
+    id: "tomatsuppe-mozzarella",
+    name: "Tomatsuppe med mozzarella",
+    category: "Suppe",
+    ingredients: [
+      { item: "Hakket tomat", amount: "2 bokser" },
+      { item: "Løk", amount: "1 stk" },
+      { item: "Hvitløk", amount: "2 fedd" },
+      { item: "Mozzarella", amount: "1 kule" },
+      { item: "Brød til servering", amount: "1 stk" }
+    ]
+  },
+  {
+    id: "quinoasalat-feta",
+    name: "Quinoasalat med feta",
+    category: "Salat",
+    ingredients: [
+      { item: "Quinoa", amount: "300 g" },
+      { item: "Feta", amount: "150 g" },
+      { item: "Cherrytomat", amount: "1 kurv" },
+      { item: "Agurk", amount: "1 stk" },
+      { item: "Sitron", amount: "1 stk" }
+    ]
+  },
+  {
+    id: "pulled-chicken-bowl",
+    name: "Pulled chicken bowl",
+    category: "Kylling",
+    ingredients: [
+      { item: "Pulled kylling", amount: "1 pakke" },
+      { item: "Ris", amount: "400 g" },
+      { item: "Mais", amount: "1 boks" },
+      { item: "Paprika", amount: "1 stk" },
+      { item: "Rømme", amount: "1 beger" }
+    ]
+  },
+  {
+    id: "pizzasnurrer",
+    name: "Pizzasnurrer",
+    category: "Vegetar",
+    ingredients: [
+      { item: "Pizzadeig", amount: "1 base" },
+      { item: "Pizzasaus", amount: "1 glass" },
+      { item: "Revet ost", amount: "200 g" },
+      { item: "Skinke eller vegetar", amount: "200 g" }
+    ]
+  },
+  {
+    id: "fiskepinner-hjemme",
+    name: "Hjemmelagde fiskepinner",
+    category: "Fisk",
+    ingredients: [
+      { item: "Hvit fisk", amount: "400 g" },
+      { item: "Egg", amount: "2 stk" },
+      { item: "Brødsmuler", amount: "2 dl" },
+      { item: "Poteter", amount: "800 g" },
+      { item: "Remulade", amount: "1 tube" }
+    ]
+  },
+  {
+    id: "panang-curry",
+    name: "Panang curry",
+    category: "Asiatisk",
+    ingredients: [
+      { item: "Kylling eller tofu", amount: "400 g" },
+      { item: "Panang curry paste", amount: "2 ss" },
+      { item: "Kokosmelk", amount: "1 boks" },
+      { item: "Grønnsaker blandet", amount: "1 pose" },
+      { item: "Ris", amount: "400 g" }
+    ]
+  },
+  {
+    id: "shepherds-pie",
+    name: "Shepherd's pie",
+    category: "Kjøtt",
+    ingredients: [
+      { item: "Kjøttdeig", amount: "500 g" },
+      { item: "Løk", amount: "1 stk" },
+      { item: "Gulrøtter", amount: "2 stk" },
+      { item: "Erter", amount: "1 pose" },
+      { item: "Potetmos", amount: "1 kg" }
+    ]
+  },
+  {
+    id: "rodbet-salat",
+    name: "Rødbetsalat med feta",
+    category: "Salat",
+    ingredients: [
+      { item: "Rødbeter", amount: "500 g" },
+      { item: "Feta", amount: "150 g" },
+      { item: "Ruccola", amount: "1 pose" },
+      { item: "Valnøtter", amount: "1 dl" }
+    ]
+  },
+  {
+    id: "fajita-quesadilla",
+    name: "Fajita quesadilla",
+    category: "TexMex",
+    ingredients: [
+      { item: "Tortillalefser", amount: "8 stk" },
+      { item: "Kyllingstrimler", amount: "400 g" },
+      { item: "Paprika", amount: "2 stk" },
+      { item: "Revet ost", amount: "200 g" }
+    ]
+  },
+  {
+    id: "torsk-ertepure",
+    name: "Torsk med ertepuré",
+    category: "Fisk",
+    ingredients: [
+      { item: "Torskefileter", amount: "500 g" },
+      { item: "Erter frosne", amount: "400 g" },
+      { item: "Poteter", amount: "800 g" },
+      { item: "Sitron", amount: "1 stk" }
+    ]
+  },
+  {
+    id: "kylling-caesar-wrap",
+    name: "Kylling Caesar wrap",
+    category: "Kylling",
+    ingredients: [
+      { item: "Tortillalefser", amount: "6 stk" },
+      { item: "Kyllingbryst", amount: "400 g" },
+      { item: "Salat", amount: "1 pose" },
+      { item: "Caesardressing", amount: "1 flaske" },
+      { item: "Parmesan", amount: "40 g" }
+    ]
+  },
+  {
+    id: "buddha-bowl",
+    name: "Buddha bowl",
+    category: "Vegetar",
+    ingredients: [
+      { item: "Quinoa eller ris", amount: "300 g" },
+      { item: "Kikerter", amount: "1 boks" },
+      { item: "Søtpotet", amount: "2 stk" },
+      { item: "Avokado", amount: "1 stk" },
+      { item: "Spinat", amount: "1 pose" }
+    ]
+  },
+  {
+    id: "kremet-soppsuppe",
+    name: "Kremet soppsuppe",
+    category: "Suppe",
+    ingredients: [
+      { item: "Sopp", amount: "400 g" },
+      { item: "Løk", amount: "1 stk" },
+      { item: "Fløte", amount: "2 dl" },
+      { item: "Buljong", amount: "1 liter" },
+      { item: "Brød", amount: "1 stk" }
+    ]
+  },
+  {
+    id: "biff-ovnsgronnsaker",
+    name: "Biff med ovnsgrønnsaker",
+    category: "Kjøtt",
+    ingredients: [
+      { item: "Biff", amount: "500 g" },
+      { item: "Poteter", amount: "700 g" },
+      { item: "Gulrøtter", amount: "3 stk" },
+      { item: "Løk", amount: "1 stk" },
+      { item: "Olje og krydder", amount: "Etter smak" }
+    ]
+  },
+  {
+    id: "kylling-satay",
+    name: "Kylling satay",
+    category: "Kylling",
+    ingredients: [
+      { item: "Kyllingbryst", amount: "500 g" },
+      { item: "Sataysaus/peanøttsaus", amount: "1 glass" },
+      { item: "Spyd", amount: "6 stk" },
+      { item: "Ris", amount: "400 g" },
+      { item: "Agurk", amount: "1 stk" }
+    ]
+  },
+  {
+    id: "club-sandwich",
+    name: "Club sandwich",
+    category: "Kjøtt",
+    ingredients: [
+      { item: "Brødskiver", amount: "8 stk" },
+      { item: "Kylling eller kalkunpålegg", amount: "200 g" },
+      { item: "Bacon", amount: "150 g" },
+      { item: "Salat og tomat", amount: "Til servering" },
+      { item: "Majones", amount: "2 ss" }
+    ]
+  },
+  {
+    id: "ramen-vegetar",
+    name: "Ramen vegetar",
+    category: "Vegetar",
+    ingredients: [
+      { item: "Ramen-nudler", amount: "4 porsjoner" },
+      { item: "Grønnsakskraft", amount: "1 liter" },
+      { item: "Sopp", amount: "200 g" },
+      { item: "Pak choi", amount: "2 stk" },
+      { item: "Egg", amount: "2 stk" }
+    ]
+  },
+  {
+    id: "chili-sin-carne",
+    name: "Chili sin carne",
+    category: "Vegetar",
+    ingredients: [
+      { item: "Kidneybønner", amount: "1 boks" },
+      { item: "Hakket tomat", amount: "2 bokser" },
+      { item: "Mais", amount: "1 boks" },
+      { item: "Løk", amount: "1 stk" },
+      { item: "Chili/spisskummen", amount: "Etter smak" }
+    ]
+  },
+  {
+    id: "couscous-kikerter",
+    name: "Couscous med kikerter",
+    category: "Vegetar",
+    ingredients: [
+      { item: "Couscous", amount: "300 g" },
+      { item: "Kikerter", amount: "1 boks" },
+      { item: "Paprika", amount: "1 stk" },
+      { item: "Sitron", amount: "1 stk" },
+      { item: "Feta", amount: "100 g" }
+    ]
+  },
+  {
+    id: "linse-stuing",
+    name: "Linsestuing",
+    category: "Vegetar",
+    ingredients: [
+      { item: "Røde linser", amount: "300 g" },
+      { item: "Løk", amount: "1 stk" },
+      { item: "Hvitløk", amount: "2 fedd" },
+      { item: "Buljong", amount: "1 liter" },
+      { item: "Spinat", amount: "1 pose" }
+    ]
+  },
+  {
+    id: "kylling-risotto",
+    name: "Kyllingrisotto",
+    category: "Kylling",
+    ingredients: [
+      { item: "Kyllingbryst", amount: "400 g" },
+      { item: "Risottoris", amount: "350 g" },
+      { item: "Løk", amount: "1 stk" },
+      { item: "Kyllingbuljong", amount: "1 liter" },
+      { item: "Parmesan", amount: "50 g" }
+    ]
+  },
+  {
+    id: "fish-taco",
+    name: "Fish taco",
+    category: "Fisk",
+    ingredients: [
+      { item: "Hvit fisk", amount: "500 g" },
+      { item: "Tortillalefser", amount: "8 stk" },
+      { item: "Kål", amount: "1/2 hode" },
+      { item: "Lime", amount: "1 stk" },
+      { item: "Salsa", amount: "1 glass" }
+    ]
+  },
+  {
+    id: "teriyaki-laks",
+    name: "Teriyaki laks",
+    category: "Fisk",
+    ingredients: [
+      { item: "Laksefilet", amount: "500 g" },
+      { item: "Teriyakisaus", amount: "1 flaske" },
+      { item: "Ris", amount: "400 g" },
+      { item: "Brokkoli", amount: "1 stk" },
+      { item: "Sesamfrø", amount: "2 ss" }
+    ]
+  },
+  {
+    id: "polsegryte",
+    name: "Pølsegryte",
+    category: "Kjøtt",
+    ingredients: [
+      { item: "Middags-/middagspølser", amount: "400 g" },
+      { item: "Poteter", amount: "700 g" },
+      { item: "Gulrøtter", amount: "3 stk" },
+      { item: "Tomatpuré", amount: "2 ss" },
+      { item: "Buljong", amount: "5 dl" }
+    ]
   }
 ];
 
