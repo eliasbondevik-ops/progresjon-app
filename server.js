@@ -205,6 +205,31 @@ const server = http.createServer(async (req, res) => {
     return send(res, 200, { ok: true, removed: before - store.receipts.length });
   }
 
+  if ((req.method === "PUT" || req.method === "POST") && url.pathname.startsWith("/api/receipts/")) {
+    const id = url.pathname.split("/").pop();
+    try {
+      const body = await parseBody(req);
+      const store = loadStore();
+      const idx = store.receipts.findIndex((r) => r.id === id);
+      if (idx === -1) return send(res, 404, { ok: false, error: "Not found" });
+      const existing = store.receipts[idx];
+      const updated = {
+        ...existing,
+        amount: body.amount !== undefined ? Number(body.amount) : existing.amount,
+        date: body.date || existing.date,
+        category: body.category || existing.category,
+        note: body.note || existing.note,
+        imageData: body.imageData || existing.imageData
+      };
+      store.receipts[idx] = updated;
+      saveStore(store);
+      return send(res, 200, { ok: true, receipt: updated });
+    } catch (err) {
+      console.error(err);
+      return send(res, 400, { ok: false, error: "Invalid JSON" });
+    }
+  }
+
   send(res, 404, { ok: false, error: "Not found" });
 });
 

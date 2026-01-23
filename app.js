@@ -1606,11 +1606,15 @@ function renderReceipts() {
         </div>
         <div class="expense-item__meta">
           ${r.date || ""} · ${r.category || "Annet"}
-          ${
-            r.imageData
-              ? `<button class="button button--ghost button--icon" data-action="view-receipt" data-id="${r.id}" aria-label="Vis kvittering">👁</button>`
-              : ""
-          }
+          <div class="receipt-buttons">
+            ${
+              r.imageData
+                ? `<button class="button button--ghost button--icon" data-action="view-receipt" data-id="${r.id}" aria-label="Vis kvittering">👁</button>`
+                : ""
+            }
+            <button class="button button--ghost button--icon" data-action="edit-receipt" data-id="${r.id}" aria-label="Rediger">✎</button>
+            <button class="button button--ghost button--icon" data-action="delete-receipt" data-id="${r.id}" aria-label="Slett">🗑</button>
+          </div>
         </div>
       </li>
     `
@@ -1801,6 +1805,30 @@ function closeReceiptOverlay() {
   if (!receiptOverlay) return;
   receiptOverlay.classList.remove("is-open");
   receiptOverlay.hidden = true;
+}
+
+async function updateReceipt(id, payload) {
+  try {
+    await fetch(`/api/receipts/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+    await fetchReceipts();
+    renderReceipts();
+  } catch (err) {
+    console.error("Kunne ikke oppdatere kvittering", err);
+  }
+}
+
+async function deleteReceipt(id) {
+  try {
+    await fetch(`/api/receipts/${id}`, { method: "DELETE" });
+    await fetchReceipts();
+    renderReceipts();
+  } catch (err) {
+    console.error("Kunne ikke slette kvittering", err);
+  }
 }
 
 function removeReminder(id) {
@@ -2181,6 +2209,32 @@ document.body.addEventListener("click", (event) => {
       receiptOverlay.hidden = false;
       receiptOverlay.classList.add("is-open");
     }
+  }
+
+  const editBtn = event.target.closest("[data-action='edit-receipt']");
+  if (editBtn) {
+    const id = editBtn.getAttribute("data-id");
+    const receipt = receiptState.find((r) => r.id === id);
+    if (!receipt) return;
+    const amountInput = prompt("Beløp (kr):", String(receipt.amount || ""));
+    if (amountInput === null) return;
+    const amount = Number(amountInput);
+    if (Number.isNaN(amount) || amount < 0) return;
+    const dateInput = prompt("Dato (YYYY-MM-DD):", receipt.date || new Date().toISOString().slice(0, 10));
+    if (dateInput === null) return;
+    const categoryInput = prompt("Kategori:", receipt.category || "Annet");
+    if (categoryInput === null) return;
+    const noteInput = prompt("Notat:", receipt.note || "");
+    if (noteInput === null) return;
+    updateReceipt(id, { amount, date: dateInput, category: categoryInput, note: noteInput, imageData: receipt.imageData });
+  }
+
+  const deleteBtn = event.target.closest("[data-action='delete-receipt']");
+  if (deleteBtn) {
+    const id = deleteBtn.getAttribute("data-id");
+    if (!id) return;
+    if (!confirm("Slett kvittering?")) return;
+    deleteReceipt(id);
   }
 
   const closeReceipt = event.target.closest("[data-action='close-receipt']");

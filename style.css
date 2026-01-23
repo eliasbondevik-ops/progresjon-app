@@ -901,6 +901,12 @@ body {
   font-weight: 800;
 }
 
+.receipt-buttons {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+}
+
 .receipt-overlay-img {
   max-width: 100%;
   max-height: 70vh;
