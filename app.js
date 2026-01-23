@@ -2593,17 +2593,18 @@ budgetMonthSelector?.addEventListener("click", (event) => {
 });
 
 reminderListEl?.addEventListener("click", (event) => {
-  const button = event.target.closest("[data-action='remove-reminder']");
-  if (!button) return;
-  const id = button.getAttribute("data-id");
-  if (!id) return;
-  removeReminder(id);
-
   const toggle = event.target.closest("[data-action='toggle-reminder']");
   if (toggle) {
     const id = toggle.getAttribute("data-id");
+    if (id) toggleReminder(id);
+    return;
+  }
+
+  const button = event.target.closest("[data-action='remove-reminder']");
+  if (button) {
+    const id = button.getAttribute("data-id");
     if (!id) return;
-    toggleReminder(id);
+    removeReminder(id);
   }
 });
 
