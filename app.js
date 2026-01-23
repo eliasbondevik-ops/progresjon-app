@@ -2082,7 +2082,7 @@ receiptAnalyze?.addEventListener("click", async () => {
     if (json.total) receiptAmount.value = json.total;
     if (json.date) receiptDate.value = json.date;
     if (json.category) receiptCategory.value = json.category;
-    receiptStatus.textContent = "Analyse fullført. Rediger og lagre.";
+    receiptStatus.textContent = json.ok ? "Analyse fullført. Rediger og lagre." : "Kunne ikke analysere. Fyll inn manuelt.";
   } catch (err) {
     console.error(err);
     receiptStatus.textContent = "Kunne ikke analysere. Fyll inn manuelt.";

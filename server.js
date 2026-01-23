@@ -132,18 +132,20 @@ const server = http.createServer(async (req, res) => {
         const aiResult = await analyzeReceiptWithOpenAI(body.imageData, body.note || "");
         if (aiResult) {
           const normalized = normalizeReceipt(aiResult, amount, date);
-          return send(res, 200, normalized);
+          return send(res, 200, { ok: true, ...normalized });
         }
       }
 
       // Fallback: enkel keyword-kategori og manuelt beløp
       const guessedCategory = guessCategory(text);
       const resp = {
+        ok: false,
         total: amount || 0,
         date,
         items: [],
         category: guessedCategory || "Annet",
-        note: body.note || ""
+        note: body.note || "",
+        message: "Ingen AI-analyseløsning tilgjengelig"
       };
       return send(res, 200, resp);
     } catch (err) {
@@ -285,6 +287,7 @@ function guessCategory(text) {
 }
 
 async function analyzeReceiptWithOpenAI(imageDataUrl, note = "") {
+  if (!OPENAI_API_KEY) return null;
   try {
     const prompt = `
 Du er en kvitteringsleser for dagligvarer. Returner strengt JSON:
@@ -355,6 +358,7 @@ function normalizeReceipt(aiResult, fallbackAmount, fallbackDate) {
   const total = Number(aiResult.total) || totalFromItems || fallbackAmount || 0;
 
   return {
+    ok: true,
     total,
     date,
     items,
