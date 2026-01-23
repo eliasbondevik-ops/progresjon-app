@@ -1467,8 +1467,9 @@ function togglePurchased(key) {
 function addExpense({ amount, date, category, note }) {
   const monthKey = date ? date.slice(0, 7) : currentMonthKey();
   ensureMonth(monthKey);
+  const id = arguments[0].id || `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`;
   budgetState.months[monthKey].expenses.unshift({
-    id: `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`,
+    id,
     amount,
     date,
     category,
@@ -1827,13 +1828,13 @@ async function updateReceipt(id, payload) {
   }
 }
 
-async function deleteReceipt(id) {
+async function deleteReceipt(id, silent = false) {
   try {
     await fetch(`/api/receipts/${id}`, { method: "DELETE" });
     await fetchReceipts();
     renderReceipts();
   } catch (err) {
-    console.error("Kunne ikke slette kvittering", err);
+    if (!silent) console.error("Kunne ikke slette kvittering", err);
   }
 }
 
@@ -1862,6 +1863,8 @@ async function deleteExpense(monthKey, id) {
     await fetch(`/api/state/expense/${monthKey}/${id}`, { method: "DELETE" });
     const month = getMonthBudget(monthKey);
     month.expenses = month.expenses.filter((e) => e.id !== id);
+    // Slett kvittering med samme id hvis finnes
+    await deleteReceipt(id, true);
     saveState(storageKeys.budget, budgetState);
     renderBudget();
   } catch (err) {
@@ -2006,8 +2009,9 @@ receiptForm?.addEventListener("submit", async (event) => {
   receiptStatus.textContent = "Lagrer kvittering...";
   const imageData = currentReceiptDataUrl || (await fileToDataUrl(file));
 
-  // Oppdater budsjett lokalt
-  addExpense({ amount, date, category, note });
+  // Oppdater budsjett lokalt med samme id som kvitteringen
+  const newId = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`;
+  addExpense({ id: newId, amount, date, category, note });
 
   // Forsøk å sende til backend kvitteringslager
   try {
@@ -2019,6 +2023,7 @@ receiptForm?.addEventListener("submit", async (event) => {
         date,
         category,
         note,
+        id: newId,
         filename: file.name,
         imageData
       })
