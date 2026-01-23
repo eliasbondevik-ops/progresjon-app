@@ -28,6 +28,8 @@ const categoryKeywords = {
   Tørrvarer: ["mel", "pasta", "ris", "nudler", "brød"]
 };
 
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY || process.env.OPEN_AI_KEY || "";
+
 function currentMonthKey() {
   const now = new Date();
   return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
@@ -124,6 +126,17 @@ const server = http.createServer(async (req, res) => {
       const text = (body.text || "").toLowerCase();
       const amount = Number(body.amount || 0);
       const date = body.date || new Date().toISOString().slice(0, 10);
+
+      // Hvis vi har OpenAI-key og bilde, forsøk ekte analyse
+      if (OPENAI_API_KEY && body.imageData) {
+        const aiResult = await analyzeReceiptWithOpenAI(body.imageData, body.note || "");
+        if (aiResult) {
+          const normalized = normalizeReceipt(aiResult, amount, date);
+          return send(res, 200, normalized);
+        }
+      }
+
+      // Fallback: enkel keyword-kategori og manuelt beløp
       const guessedCategory = guessCategory(text);
       const resp = {
         total: amount || 0,
@@ -204,6 +217,94 @@ function guessCategory(text) {
     }
   }
   return null;
+}
+
+async function analyzeReceiptWithOpenAI(imageDataUrl, note = "") {
+  try {
+    const prompt = `
+Du er en kvitteringsleser for dagligvarer. Returner strengt JSON:
+{ "total": number, "currency": "NOK", "date": "YYYY-MM-DD" eller "", "items": [ { "name": "...", "price": number, "category": "" } ] }
+Bruk kategorier som stammer fra varenavn (slik som "Kjøtt/Fisk", "Grønnsaker/Frukt", "Meieri/Egg", "Tørrvarer", "Drikke", "Snacks", "Annet").
+Hvis du er usikker på dato, sett "".
+Summér alle linjer som har tall til total dersom total ikke tydelig finnes.
+Tekst fra bruker (notat): ${note}`;
+
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${OPENAI_API_KEY}`
+      },
+      body: JSON.stringify({
+        model: "gpt-4o",
+        messages: [
+          { role: "system", content: "Du er en presis kvitteringsleser." },
+          {
+            role: "user",
+            content: [
+              { type: "text", text: prompt },
+              { type: "image_url", image_url: { url: imageDataUrl } }
+            ]
+          }
+        ],
+        temperature: 0
+      })
+    });
+
+    const json = await response.json();
+    const content = json.choices?.[0]?.message?.content || "";
+    const parsed = safeJsonFromText(content);
+    return parsed;
+  } catch (err) {
+    console.error("OpenAI analysis failed:", err);
+    return null;
+  }
+}
+
+function safeJsonFromText(text) {
+  if (!text) return null;
+  const start = text.indexOf("{");
+  const end = text.lastIndexOf("}");
+  if (start === -1 || end === -1) return null;
+  const slice = text.slice(start, end + 1);
+  try {
+    return JSON.parse(slice);
+  } catch (err) {
+    return null;
+  }
+}
+
+function normalizeReceipt(aiResult, fallbackAmount, fallbackDate) {
+  const date = aiResult.date || fallbackDate || new Date().toISOString().slice(0, 10);
+  let items = Array.isArray(aiResult.items) ? aiResult.items : [];
+
+  // Mapper kategorier og priser
+  items = items.map((item) => {
+    const name = item.name || "Vare";
+    const price = Number(item.price) || 0;
+    const cat = mapCategory(item.category || "", name);
+    return { name, price, category: cat };
+  });
+
+  const totalFromItems = items.reduce((sum, i) => sum + (Number(i.price) || 0), 0);
+  const total = Number(aiResult.total) || totalFromItems || fallbackAmount || 0;
+
+  return {
+    total,
+    date,
+    items,
+    category: guessCategory(items.map((i) => i.name).join(" ")) || "Annet",
+    note: aiResult.note || ""
+  };
+}
+
+function mapCategory(cat, name) {
+  if (cat && categoryKeywords[cat]) return cat;
+  const lower = `${cat} ${name}`.toLowerCase();
+  for (const [k, words] of Object.entries(categoryKeywords)) {
+    if (words.some((w) => lower.includes(w))) return k;
+  }
+  return "Annet";
 }
 
 server.listen(PORT, () => {
