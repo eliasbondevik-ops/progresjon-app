@@ -77,7 +77,7 @@ function send(res, status, data) {
   res.end(JSON.stringify(data));
 }
 
-function parseBody(req, limitBytes = 15 * 1024 * 1024) {
+function parseBody(req, limitBytes = 30 * 1024 * 1024) {
   return new Promise((resolve, reject) => {
     let body = "";
     req.on("data", (chunk) => {
@@ -122,7 +122,7 @@ const server = http.createServer(async (req, res) => {
 
   if (req.method === "POST" && url.pathname === "/api/analyze-receipt") {
     try {
-      const body = await parseBody(req);
+      const body = await parseBody(req, 50 * 1024 * 1024);
       const text = (body.text || "").toLowerCase();
       const amount = Number(body.amount || 0);
       const date = body.date || new Date().toISOString().slice(0, 10);
