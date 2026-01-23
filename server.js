@@ -230,6 +230,46 @@ const server = http.createServer(async (req, res) => {
     }
   }
 
+  if (req.method === "PUT" && url.pathname === "/api/state/expense") {
+    try {
+      const body = await parseBody(req);
+      const store = loadStore();
+      const monthKey = body.month;
+      const id = body.id;
+      if (!monthKey || !id) return send(res, 400, { ok: false, error: "month and id required" });
+      const month = store.budget?.months?.[monthKey];
+      if (!month) return send(res, 404, { ok: false, error: "month not found" });
+      const idx = month.expenses.findIndex((e) => e.id === id);
+      if (idx === -1) return send(res, 404, { ok: false, error: "expense not found" });
+      const existing = month.expenses[idx];
+      month.expenses[idx] = {
+        ...existing,
+        amount: body.amount !== undefined ? Number(body.amount) : existing.amount,
+        date: body.date || existing.date,
+        category: body.category || existing.category,
+        note: body.note || existing.note
+      };
+      saveStore(store);
+      return send(res, 200, { ok: true, expense: month.expenses[idx] });
+    } catch (err) {
+      console.error(err);
+      return send(res, 400, { ok: false, error: "Invalid JSON" });
+    }
+  }
+
+  if (req.method === "DELETE" && url.pathname.startsWith("/api/state/expense/")) {
+    const parts = url.pathname.split("/");
+    const monthKey = parts[parts.length - 2];
+    const id = parts[parts.length - 1];
+    const store = loadStore();
+    const month = store.budget?.months?.[monthKey];
+    if (!month) return send(res, 404, { ok: false, error: "month not found" });
+    const before = month.expenses.length;
+    month.expenses = month.expenses.filter((e) => e.id !== id);
+    saveStore(store);
+    return send(res, 200, { ok: true, removed: before - month.expenses.length });
+  }
+
   send(res, 404, { ok: false, error: "Not found" });
 });
 

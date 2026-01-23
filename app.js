@@ -1530,7 +1530,13 @@ function renderBudget() {
             <div class="expense-item__amount">${Number(e.amount).toFixed(0)} kr</div>
             <div class="expense-item__meta">${e.category || "Annet"} · ${e.note || "Ingen notat"}</div>
           </div>
-          <div class="expense-item__meta">${e.date}</div>
+          <div class="expense-item__meta">
+            ${e.date}
+            <div class="receipt-buttons">
+              <button class="button button--ghost button--icon" data-action="edit-expense" data-id="${e.id}" aria-label="Rediger transaksjon">✎</button>
+              <button class="button button--ghost button--icon" data-action="delete-expense" data-id="${e.id}" aria-label="Slett transaksjon">🗑</button>
+            </div>
+          </div>
         </li>
       `
         )
@@ -1828,6 +1834,38 @@ async function deleteReceipt(id) {
     renderReceipts();
   } catch (err) {
     console.error("Kunne ikke slette kvittering", err);
+  }
+}
+
+async function updateExpense(monthKey, id, payload) {
+  try {
+    await fetch(`/api/state/expense`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ month: monthKey, id, ...payload })
+    });
+    // Oppdater lokalt for rask UI
+    const month = getMonthBudget(monthKey);
+    const idx = month.expenses.findIndex((e) => e.id === id);
+    if (idx !== -1) {
+      month.expenses[idx] = { ...month.expenses[idx], ...payload };
+      saveState(storageKeys.budget, budgetState);
+      renderBudget();
+    }
+  } catch (err) {
+    console.error("Kunne ikke oppdatere transaksjon", err);
+  }
+}
+
+async function deleteExpense(monthKey, id) {
+  try {
+    await fetch(`/api/state/expense/${monthKey}/${id}`, { method: "DELETE" });
+    const month = getMonthBudget(monthKey);
+    month.expenses = month.expenses.filter((e) => e.id !== id);
+    saveState(storageKeys.budget, budgetState);
+    renderBudget();
+  } catch (err) {
+    console.error("Kunne ikke slette transaksjon", err);
   }
 }
 
@@ -2235,6 +2273,33 @@ document.body.addEventListener("click", (event) => {
     if (!id) return;
     if (!confirm("Slett kvittering?")) return;
     deleteReceipt(id);
+  }
+
+  const editExpBtn = event.target.closest("[data-action='edit-expense']");
+  if (editExpBtn) {
+    const id = editExpBtn.getAttribute("data-id");
+    const monthBudget = getMonthBudget(activeBudgetMonth);
+    const expense = monthBudget.expenses.find((e) => e.id === id);
+    if (!expense) return;
+    const amountInput = prompt("Beløp (kr):", String(expense.amount || ""));
+    if (amountInput === null) return;
+    const amount = Number(amountInput);
+    if (Number.isNaN(amount) || amount < 0) return;
+    const dateInput = prompt("Dato (YYYY-MM-DD):", expense.date || new Date().toISOString().slice(0, 10));
+    if (dateInput === null) return;
+    const categoryInput = prompt("Kategori:", expense.category || "Annet");
+    if (categoryInput === null) return;
+    const noteInput = prompt("Notat:", expense.note || "");
+    if (noteInput === null) return;
+    updateExpense(activeBudgetMonth, id, { amount, date: dateInput, category: categoryInput, note: noteInput });
+  }
+
+  const deleteExpBtn = event.target.closest("[data-action='delete-expense']");
+  if (deleteExpBtn) {
+    const id = deleteExpBtn.getAttribute("data-id");
+    if (!id) return;
+    if (!confirm("Slett transaksjon?")) return;
+    deleteExpense(activeBudgetMonth, id);
   }
 
   const closeReceipt = event.target.closest("[data-action='close-receipt']");
