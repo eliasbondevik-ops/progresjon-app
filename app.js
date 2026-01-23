@@ -1351,16 +1351,22 @@ function renderDayPlan() {
   }
 
   reminderListEl.innerHTML = list
-    .map(
-      (item) => `
-      <li class="reminder-item">
-        <div class="reminder-item__text">${item.text}</div>
-        <div class="reminder-actions">
-          <button class="button button--ghost button--icon" data-action="remove-reminder" data-id="${item.id}" aria-label="Fjern påminnelse">−</button>
-        </div>
-      </li>
-    `
-    )
+    .map((item) => {
+      const done = item.done ? "checked" : "";
+      const cls = item.done ? "is-done" : "";
+      return `
+        <li class="reminder-item ${cls}">
+          <label class="reminder-check">
+            <input type="checkbox" data-action="toggle-reminder" data-id="${item.id}" ${done} aria-label="Marker som gjort">
+            <span></span>
+          </label>
+          <div class="reminder-item__text">${item.text}</div>
+          <div class="reminder-actions">
+            <button class="button button--ghost button--icon" data-action="remove-reminder" data-id="${item.id}" aria-label="Fjern påminnelse">−</button>
+          </div>
+        </li>
+      `;
+    })
     .join("");
 }
 
@@ -1883,6 +1889,18 @@ function removeReminder(id) {
   renderDayPlan();
 }
 
+function toggleReminder(id) {
+  const dayList = remindersState[activeDayPlan] || [];
+  remindersState = {
+    ...remindersState,
+    [activeDayPlan]: dayList.map((item) =>
+      item.id === id ? { ...item, done: !item.done } : item
+    )
+  };
+  saveState(storageKeys.reminders, remindersState);
+  renderDayPlan();
+}
+
 dayGrid.addEventListener("change", (event) => {
   const target = event.target;
   if (target.matches("select[data-day]")) {
@@ -2220,6 +2238,13 @@ reminderListEl?.addEventListener("click", (event) => {
   const id = button.getAttribute("data-id");
   if (!id) return;
   removeReminder(id);
+
+  const toggle = event.target.closest("[data-action='toggle-reminder']");
+  if (toggle) {
+    const id = toggle.getAttribute("data-id");
+    if (!id) return;
+    toggleReminder(id);
+  }
 });
 
 buildPlanner();
