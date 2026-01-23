@@ -1014,6 +1014,7 @@ const receiptOverlayImg = document.getElementById("receipt-overlay-img");
 const receiptOverlayEmbed = document.getElementById("receipt-overlay-embed");
 const receiptOverlayTitle = document.getElementById("receipt-overlay-title");
 const receiptOverlaySubtitle = document.getElementById("receipt-overlay-subtitle");
+const API_BASE = window.location.origin.startsWith("file:") ? "http://localhost:3001" : "";
 let activeTab = "middagsplan";
 let activeDayPlan = dayOrder[0].key;
 let activeMealDay = dayOrder[0].key;
@@ -1587,7 +1588,7 @@ function fileToDataUrl(file) {
 
 async function fetchReceipts() {
   try {
-    const resp = await fetch("/api/receipts");
+    const resp = await fetch(`${API_BASE}/api/receipts`);
     const json = await resp.json();
     receiptState = json.receipts || [];
   } catch (err) {
@@ -1816,7 +1817,7 @@ function closeReceiptOverlay() {
 
 async function updateReceipt(id, payload) {
   try {
-    await fetch(`/api/receipts/${id}`, {
+    await fetch(`${API_BASE}/api/receipts/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
@@ -1830,7 +1831,7 @@ async function updateReceipt(id, payload) {
 
 async function deleteReceipt(id, silent = false) {
   try {
-    await fetch(`/api/receipts/${id}`, { method: "DELETE" });
+    await fetch(`${API_BASE}/api/receipts/${id}`, { method: "DELETE" });
     await fetchReceipts();
     renderReceipts();
   } catch (err) {
@@ -1840,7 +1841,7 @@ async function deleteReceipt(id, silent = false) {
 
 async function updateExpense(monthKey, id, payload) {
   try {
-    await fetch(`/api/state/expense`, {
+    await fetch(`${API_BASE}/api/state/expense`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ month: monthKey, id, ...payload })
@@ -1860,7 +1861,7 @@ async function updateExpense(monthKey, id, payload) {
 
 async function deleteExpense(monthKey, id) {
   try {
-    await fetch(`/api/state/expense/${monthKey}/${id}`, { method: "DELETE" });
+    await fetch(`${API_BASE}/api/state/expense/${monthKey}/${id}`, { method: "DELETE" });
     const month = getMonthBudget(monthKey);
     month.expenses = month.expenses.filter((e) => e.id !== id);
     // Slett kvittering med samme id hvis finnes
@@ -2015,7 +2016,7 @@ receiptForm?.addEventListener("submit", async (event) => {
 
   // Forsøk å sende til backend kvitteringslager
   try {
-    await fetch("/api/receipts", {
+    await fetch(`${API_BASE}/api/receipts`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -2050,7 +2051,7 @@ receiptAnalyze?.addEventListener("click", async () => {
   const dataUrl = currentReceiptDataUrl || (await fileToDataUrl(file));
   currentReceiptDataUrl = dataUrl;
   try {
-    const resp = await fetch("/api/analyze-receipt", {
+    const resp = await fetch(`${API_BASE}/api/analyze-receipt`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
