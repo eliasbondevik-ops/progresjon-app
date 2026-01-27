@@ -667,6 +667,13 @@ body {
   gap: 6px;
 }
 
+.manual-form {
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 .shopping-actions {
   display: flex;
   justify-content: flex-end;

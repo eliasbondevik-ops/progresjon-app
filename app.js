@@ -1328,6 +1328,9 @@ const restSuggestionMap = {
 const dayGrid = document.getElementById("day-grid");
 const shoppingListEl = document.getElementById("shopping-list");
 const clearListButton = document.getElementById("clear-list");
+const manualItemForm = document.getElementById("manual-item-form");
+const manualItemInput = document.getElementById("manual-item");
+const manualAmountInput = document.getElementById("manual-amount");
 const tabButtons = document.querySelectorAll("[data-tab]");
 const tabPanels = document.querySelectorAll("[data-panel]");
 const daySelector = document.getElementById("day-selector");
@@ -2552,6 +2555,16 @@ shoppingListEl.addEventListener("click", (event) => {
     if (!key) return;
     togglePurchased(key);
   }
+});
+
+manualItemForm?.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const item = manualItemInput?.value?.trim();
+  const amount = manualAmountInput?.value?.trim() || "";
+  if (!item) return;
+  addToShoppingList({ item, amount }, "Manuell", "manuell");
+  manualItemInput.value = "";
+  manualAmountInput.value = "";
 });
 
 daySelector?.addEventListener("click", (event) => {

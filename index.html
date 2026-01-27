@@ -51,6 +51,19 @@
           <div class="panel__title">Handleliste</div>
           <div class="panel__hint">Samle ingredienser med +</div>
         </div>
+        <form id="manual-item-form" class="manual-form">
+          <div class="input-grid expense-grid">
+            <div class="input-row">
+              <label class="input-label" for="manual-item">Legg til vare</label>
+              <input class="input" id="manual-item" type="text" placeholder="F.eks. Appelsin" required>
+            </div>
+            <div class="input-row">
+              <label class="input-label" for="manual-amount">Mengde (valgfri)</label>
+              <input class="input" id="manual-amount" type="text" placeholder="F.eks. 1 kg">
+            </div>
+          </div>
+          <button class="button" type="submit">Legg til i handleliste</button>
+        </form>
         <div class="shopping-actions">
           <button id="clear-list" class="button button--ghost" type="button">Tøm handlelisten</button>
         </div>
